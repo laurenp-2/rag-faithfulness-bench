@@ -1,0 +1,20 @@
+# Core ML/NLP
+spacy>=3.7.0
+sentence-transformers>=2.7.0
+transformers>=4.40.0
+torch>=2.2.0
+faiss-cpu>=1.8.0
+
+# LLM API
+anthropic>=0.25.0
+
+# Data processing
+datasets>=2.19.0
+numpy>=1.26.0
+
+# Evaluation
+scikit-learn>=1.4.0
+
+# Utilities
+tqdm>=4.66.0
+python-dotenv>=1.0.0
