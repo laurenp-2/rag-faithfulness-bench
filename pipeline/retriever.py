@@ -26,10 +26,6 @@ class Retriever:
         self._index: faiss.IndexFlatIP | None = None
         self._corpus: list[str] = []
 
-    # ------------------------------------------------------------------
-    # Index construction
-    # ------------------------------------------------------------------
-
     def build_index(self, contexts: list[str]) -> None:
         """Encode *contexts* and build a FAISS inner-product index."""
         self._corpus = contexts
@@ -42,10 +38,7 @@ class Retriever:
         vecs = self.model.encode(texts, normalize_embeddings=True, show_progress_bar=False)
         return np.array(vecs, dtype="float32")
 
-    # ------------------------------------------------------------------
-    # Retrieval
-    # ------------------------------------------------------------------
-
+  
     def retrieve(self, query: str, k: int = 3) -> list[str]:
         """Return the top-k contexts most similar to *query*."""
         if self._index is None:
@@ -69,10 +62,6 @@ class Retriever:
             for rank, i in enumerate(indices[0])
             if i >= 0
         ]
-
-    # ------------------------------------------------------------------
-    # Persistence helpers
-    # ------------------------------------------------------------------
 
     def save(self, index_path: str, corpus_path: str) -> None:
         import json, pathlib

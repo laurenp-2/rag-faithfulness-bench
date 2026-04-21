@@ -1,50 +1,55 @@
 """
-Downloads and formats a subset of TriviaQA for use as the benchmark seed dataset.
-Outputs: data/base_qa_pairs.json
+Converts a locally downloaded SQuAD v1.1 JSON file into the benchmark format.
+
+Usage:
+    python data/download_data.py
+
+Input:  data/squad.json  (download from https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json)
+Output: data/base_qa_pairs.json
 """
 
 import json
 import random
 from pathlib import Path
-from datasets import load_dataset
 
 
-def download_and_format(num_examples: int = 150, seed: int = 42) -> None:
+def convert(squad_path: str = "data/squad.json", num_examples: int = 150, seed: int = 42) -> None:
     random.seed(seed)
 
-    print("Loading TriviaQA (rc.wikipedia split)...")
-    dataset = load_dataset("trivia_qa", "rc.wikipedia", split="train", trust_remote_code=True)
+    with open(squad_path) as f:
+        squad = json.load(f)
 
     qa_pairs = []
-    for item in dataset:
-        question = item["question"].strip()
-        gold_answer = item["answer"]["value"].strip()
+    for article in squad["data"]:
+        for paragraph in article["paragraphs"]:
+            context = paragraph["context"].strip()
+            for qa in paragraph["qas"]:
+                if not qa["answers"]:
+                    continue
+                question = qa["question"].strip()
+                gold_answer = qa["answers"][0]["text"].strip()
 
-        # Pull the first Wikipedia search result that has non-empty text
-        contexts = item.get("search_results", {})
-        search_contexts = contexts.get("search_context", []) if contexts else []
-        gold_context = ""
-        for ctx in search_contexts:
-            ctx = ctx.strip()
-            if gold_answer.lower() in ctx.lower() and len(ctx) > 40:
-                # Keep the single most relevant sentence
-                for sentence in ctx.split("."):
+                # Find the sentence in the context that contains the answer
+                gold_context = ""
+                for sentence in context.split("."):
                     if gold_answer.lower() in sentence.lower() and len(sentence.strip()) > 20:
                         gold_context = sentence.strip() + "."
                         break
-            if gold_context:
+
+                if not gold_context:
+                    continue
+
+                qa_pairs.append({
+                    "id": qa["id"],
+                    "question": question,
+                    "gold_answer": gold_answer,
+                    "gold_context": gold_context,
+                })
+
+                if len(qa_pairs) >= num_examples:
+                    break
+            if len(qa_pairs) >= num_examples:
                 break
-
-        if not gold_context:
-            continue
-
-        qa_pairs.append({
-            "id": item["question_id"],
-            "question": question,
-            "gold_answer": gold_answer,
-            "gold_context": gold_context,
-        })
-
         if len(qa_pairs) >= num_examples:
             break
 
@@ -56,4 +61,4 @@ def download_and_format(num_examples: int = 150, seed: int = 42) -> None:
 
 
 if __name__ == "__main__":
-    download_and_format()
+    convert()

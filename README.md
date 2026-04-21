@@ -34,7 +34,7 @@ gold context ──┬── original      →  baseline
                FAISS retriever (sentence-transformers)
                         │
                         ▼
-               Claude LLM generator
+               local LLM generator (Ollama)
                         │
                         ▼
                NLI faithfulness scorer (DeBERTa)
@@ -73,27 +73,30 @@ gold context ──┬── original      →  baseline
 
 ## Setup
 
-**Requirements:** Python 3.10+, an Anthropic API key.
+**Requirements:** Python 3.10+, [Ollama](https://ollama.com) (free, runs locally — no API key needed).
 
 ```bash
-# 1. Install dependencies
+# 1. Install Ollama
+#    Download from https://ollama.com, or: brew install ollama
+#    Then pull a model (default):
+ollama pull llama3.2:3b
+
+# 2. Install Python dependencies
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
-
-# 2. Configure API key
-cp .env.example .env
-# Open .env and set ANTHROPIC_API_KEY=your_key_here
 
 # 3. Download and format the seed dataset (~150 TriviaQA examples)
 python data/download_data.py
 ```
+
+Ollama starts automatically once installed and runs as a local server on `localhost:11434`. No accounts, no credits.
 
 ---
 
 ## Running the benchmark
 
 ```bash
-# Smoke-test on 10 examples (fast, ~2 minutes)
+# Smoke-test on 10 examples (~3 minutes)
 python experiments/run_benchmark.py --limit 10
 
 # Full run on all 150 examples
@@ -102,20 +105,31 @@ python experiments/run_benchmark.py
 # Custom configuration
 python experiments/run_benchmark.py \
     --data data/base_qa_pairs.json \
-    --output results/outputs.json \
+    --model llama3.2:3b \
     --k 3 \
     --limit 50
 ```
 
-Output is written to two files:
+### Multi-model comparison
 
-- `results/outputs.json` — one record per (QA pair × perturbation type) with full scores
-- `results/summary.json` — aggregated metrics table, also printed to stdout
-
-Re-run the summary at any time:
+Results are automatically namespaced by model so runs never overwrite each other:
 
 ```bash
-python eval/metrics.py results/outputs.json
+python experiments/run_benchmark.py --model llama3.2:3b
+python experiments/run_benchmark.py --model llama3.1:8b
+python experiments/run_benchmark.py --model mistral:7b
+python experiments/run_benchmark.py --model qwen2.5:7b
+```
+
+Output per model is written to:
+
+- `results/<model>/outputs.json` — one record per (QA pair × perturbation type) with full scores
+- `results/<model>/summary.json` — aggregated metrics table, also printed to stdout
+
+Re-run the summary table at any time without re-running the full pipeline:
+
+```bash
+python eval/metrics.py results/llama3.2_3b/outputs.json
 ```
 
 ---
@@ -132,11 +146,11 @@ rag-faithfulness-bench/
 ├── perturbations/
 │   ├── entity_swap.py          # SpaCy NER + same-type lookup-table swap
 │   ├── negation.py             # dependency-parse negation of main verb
-│   └── paraphrase.py           # Claude API paraphrase (control condition)
+│   └── paraphrase.py           # Ollama paraphrase (control condition)
 │
 ├── pipeline/
 │   ├── retriever.py            # FAISS dense retriever (sentence-transformers)
-│   └── generator.py            # Claude API answer generation with strict prompt
+│   └── generator.py            # Ollama answer generation with strict prompt
 │
 ├── eval/
 │   ├── faithfulness_scorer.py  # NLI faithfulness + EM/F1 + hallucination flag
@@ -146,11 +160,11 @@ rag-faithfulness-bench/
 │   └── run_benchmark.py        # main entry point (orchestrates full pipeline)
 │
 ├── results/
-│   ├── outputs.json            # per-example results (generated)
-│   └── summary.json            # aggregate metrics (generated)
+│   └── <model>/
+│       ├── outputs.json        # per-example results (generated)
+│       └── summary.json        # aggregate metrics (generated)
 │
-├── requirements.txt
-└── .env.example
+└── requirements.txt
 ```
 
 ---
@@ -176,17 +190,26 @@ Example entry in `data/base_qa_pairs.json`:
 
 | Component | Model | Notes |
 |---|---|---|
-| Retriever embeddings | `sentence-transformers/all-MiniLM-L6-v2` | Fast, ~80MB |
-| Paraphrase generation | `claude-haiku-4-5-20251001` | Cost-efficient preprocessing |
-| Answer generation | `claude-haiku-4-5-20251001` | Strict context-grounded prompt |
+| Retriever embeddings | `sentence-transformers/all-MiniLM-L6-v2` | Fast, ~80MB, runs locally |
+| Paraphrase generation | configurable via `--model` (default: `llama3.2:3b`) | Free, runs locally via Ollama |
+| Answer generation | configurable via `--model` (default: `llama3.2:3b`) | Free, runs locally via Ollama |
 | NLI faithfulness scoring | `cross-encoder/nli-deberta-v3-base` | State-of-the-art NLI on SNLI/MNLI |
+
+Tested models (pull with `ollama pull <name>`):
+
+| Model | Size | Notes |
+|---|---|---|
+| `llama3.2:3b` | 2GB | Fast, good baseline |
+| `llama3.1:8b` | 5GB | Better instruction following |
+| `mistral:7b` | 4GB | Strong reasoning |
+| `qwen2.5:7b` | 4GB | Best abstention calibration in testing |
 
 ---
 
 ## Limitations
 
 - **Scale:** 100–150 examples is sufficient for a prototype but limits statistical power. A full study would use 1,000+.
-- **Single LLM:** Results are specific to Claude Haiku. Behavior may differ across model families and sizes.
+- **Model-specific results:** Behavior varies across model families and sizes — use `--model` to compare.
 - **English only:** All perturbations and NLI models are English-language.
 - **Entity swap coverage:** The lookup table covers common entity types; rare or domain-specific entities may not be swapped.
 - **Negation depth:** The dependency-parse negation handles simple declarative sentences; complex or compound sentences may not negate cleanly.

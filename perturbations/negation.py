@@ -61,14 +61,12 @@ def _negate_sentence(sent) -> str | None:
     """
     tokens = list(sent)
 
-    # -----------------------------------------------------------------------
-    # Strategy 1: negate an existing auxiliary/modal that precedes the ROOT
-    # -----------------------------------------------------------------------
+
     root = next((t for t in tokens if t.dep_ == "ROOT"), None)
     if root is None:
         return None
 
-    # Walk left siblings of root looking for aux / auxpass
+
     for tok in tokens:
         if tok.dep_ in ("aux", "auxpass") and tok.i < root.i:
             lemma = tok.lemma_.lower()
@@ -84,10 +82,7 @@ def _negate_sentence(sent) -> str | None:
                 )
                 return result
 
-    # -----------------------------------------------------------------------
-    # Strategy 2: negate the ROOT verb directly by prepending "did not"
-    # Only applicable when ROOT is a simple past/present tense verb.
-    # -----------------------------------------------------------------------
+
     if root.pos_ == "VERB" and root.tag_ in ("VBD", "VBZ", "VBP", "VB"):
         # Insert "did not" before the root; convert root to base form
         base_form = root.lemma_
@@ -117,17 +112,16 @@ def negate_context(context: str) -> str:
     for sent in doc.sents:
         negated = _negate_sentence(sent)
         if negated is not None:
-            # Re-assemble: replace this sentence in the full context
+
             before = context[: sent.start_char]
             after = context[sent.end_char:]
             return before + negated + after
 
-    # Fallback: crude insertion of "not" after the first auxiliary-like word
+
     for word in ["was ", "is ", "were ", "are ", "has ", "have ", "did "]:
         if word in context:
             return context.replace(word, word.rstrip() + " not ", 1)
 
-    # Last resort: prepend "It is not true that"
     return "It is not true that " + context[0].lower() + context[1:]
 
 

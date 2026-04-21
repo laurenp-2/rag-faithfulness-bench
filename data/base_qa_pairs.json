@@ -1,0 +1,902 @@
+[
+  {
+    "id": "5733be284776f41900661182",
+    "question": "To whom did the Virgin Mary allegedly appear in 1858 in Lourdes France?",
+    "gold_answer": "Saint Bernadette Soubirous",
+    "gold_context": "It is a replica of the grotto at Lourdes, France where the Virgin Mary reputedly appeared to Saint Bernadette Soubirous in 1858."
+  },
+  {
+    "id": "5733be284776f4190066117f",
+    "question": "What is in front of the Notre Dame Main Building?",
+    "gold_answer": "a copper statue of Christ",
+    "gold_context": "Immediately in front of the Main Building and facing it, is a copper statue of Christ with arms upraised with the legend \"Venite Ad Me Omnes\"."
+  },
+  {
+    "id": "5733be284776f41900661180",
+    "question": "The Basilica of the Sacred heart at Notre Dame is beside to which structure?",
+    "gold_answer": "the Main Building",
+    "gold_context": "Atop the Main Building's gold dome is a golden statue of the Virgin Mary."
+  },
+  {
+    "id": "5733be284776f41900661181",
+    "question": "What is the Grotto at Notre Dame?",
+    "gold_answer": "a Marian place of prayer and reflection",
+    "gold_context": "Immediately behind the basilica is the Grotto, a Marian place of prayer and reflection."
+  },
+  {
+    "id": "5733be284776f4190066117e",
+    "question": "What sits on top of the Main Building at Notre Dame?",
+    "gold_answer": "a golden statue of the Virgin Mary",
+    "gold_context": "Atop the Main Building's gold dome is a golden statue of the Virgin Mary."
+  },
+  {
+    "id": "5733bf84d058e614000b61be",
+    "question": "When did the Scholastic Magazine of Notre dame begin publishing?",
+    "gold_answer": "September 1876",
+    "gold_context": "Begun as a one-page journal in September 1876, the Scholastic magazine is issued twice monthly and claims to be the oldest continuous collegiate publication in the United States."
+  },
+  {
+    "id": "5733bf84d058e614000b61bf",
+    "question": "How often is Notre Dame's the Juggler published?",
+    "gold_answer": "twice",
+    "gold_context": "Begun as a one-page journal in September 1876, the Scholastic magazine is issued twice monthly and claims to be the oldest continuous collegiate publication in the United States."
+  },
+  {
+    "id": "5733bf84d058e614000b61c0",
+    "question": "What is the daily student paper at Notre Dame called?",
+    "gold_answer": "The Observer",
+    "gold_context": "The newspapers have varying publication interests, with The Observer published daily and mainly reporting university and other news, and staffed by students from both Notre Dame and Saint Mary's College."
+  },
+  {
+    "id": "5733bf84d058e614000b61bd",
+    "question": "How many student news papers are found at Notre Dame?",
+    "gold_answer": "three",
+    "gold_context": "The nine student-run outlets include three newspapers, both a radio and television station, and several magazines and journals."
+  },
+  {
+    "id": "5733bf84d058e614000b61c1",
+    "question": "In what year did the student paper Common Sense begin publication at Notre Dame?",
+    "gold_answer": "1987",
+    "gold_context": "In 1987, when some students believed that The Observer began to show a conservative bias, a liberal newspaper, Common Sense was published."
+  },
+  {
+    "id": "5733bed24776f41900661188",
+    "question": "Where is the headquarters of the Congregation of the Holy Cross?",
+    "gold_answer": "Rome",
+    "gold_context": "The university is the major seat of the Congregation of Holy Cross (albeit not its official headquarters, which are in Rome)."
+  },
+  {
+    "id": "5733bed24776f41900661189",
+    "question": "What is the primary seminary of the Congregation of the Holy Cross?",
+    "gold_answer": "Moreau Seminary",
+    "gold_context": "Its main seminary, Moreau Seminary, is located on the campus across St."
+  },
+  {
+    "id": "5733bed24776f4190066118a",
+    "question": "What is the oldest structure at Notre Dame?",
+    "gold_answer": "Old College",
+    "gold_context": "Old College, the oldest building on campus and located near the shore of St."
+  },
+  {
+    "id": "5733bed24776f4190066118b",
+    "question": "What individuals live at Fatima House at Notre Dame?",
+    "gold_answer": "Retired priests and brothers",
+    "gold_context": "Retired priests and brothers reside in Fatima House (a former retreat center), Holy Cross House, as well as Columba Hall near the Grotto."
+  },
+  {
+    "id": "5733bed24776f4190066118c",
+    "question": "Which prize did Frederick Buechner create?",
+    "gold_answer": "Buechner Prize for Preaching",
+    "gold_context": "While not Catholic, Buechner has praised writers from Notre Dame and Moreau Seminary created a Buechner Prize for Preaching."
+  },
+  {
+    "id": "5733a6424776f41900660f51",
+    "question": "How many BS level degrees are offered in the College of Engineering at Notre Dame?",
+    "gold_answer": "eight",
+    "gold_context": "Today the college, housed in the Fitzpatrick, Cushing, and Stinson-Remick Halls of Engineering, includes five departments of study \u2013 aerospace and mechanical engineering, chemical and biomolecular engineering, civil engineering and geological sciences, computer science and engineering, and electrical engineering \u2013 with eight B."
+  },
+  {
+    "id": "5733a6424776f41900660f4e",
+    "question": "In what year was the College of Engineering at Notre Dame formed?",
+    "gold_answer": "1920",
+    "gold_context": "The College of Engineering was established in 1920, however, early courses in civil and mechanical engineering were a part of the College of Science since the 1870s."
+  },
+  {
+    "id": "5733a6424776f41900660f4f",
+    "question": "Before the creation of the College of Engineering similar studies were carried out at which Notre Dame college?",
+    "gold_answer": "the College of Science",
+    "gold_context": "The College of Engineering was established in 1920, however, early courses in civil and mechanical engineering were a part of the College of Science since the 1870s."
+  },
+  {
+    "id": "5733a6424776f41900660f50",
+    "question": "How many departments are within the Stinson-Remick Hall of Engineering?",
+    "gold_answer": "five",
+    "gold_context": "Today the college, housed in the Fitzpatrick, Cushing, and Stinson-Remick Halls of Engineering, includes five departments of study \u2013 aerospace and mechanical engineering, chemical and biomolecular engineering, civil engineering and geological sciences, computer science and engineering, and electrical engineering \u2013 with eight B."
+  },
+  {
+    "id": "5733a6424776f41900660f52",
+    "question": "The College of Science began to offer civil engineering courses beginning at what time at Notre Dame?",
+    "gold_answer": "the 1870s",
+    "gold_context": "The College of Engineering was established in 1920, however, early courses in civil and mechanical engineering were a part of the College of Science since the 1870s."
+  },
+  {
+    "id": "5733a70c4776f41900660f64",
+    "question": "What entity provides help with the management of time for new students at Notre Dame?",
+    "gold_answer": "Learning Resource Center",
+    "gold_context": "The program also includes a Learning Resource Center which provides time management, collaborative learning, and subject tutoring."
+  },
+  {
+    "id": "5733a70c4776f41900660f62",
+    "question": "How many colleges for undergraduates are at Notre Dame?",
+    "gold_answer": "five",
+    "gold_context": "All of Notre Dame's undergraduate students are a part of one of the five undergraduate colleges at the school or are in the First Year of Studies program."
+  },
+  {
+    "id": "5733a70c4776f41900660f63",
+    "question": "What was created at Notre Dame in 1962 to assist first year students?",
+    "gold_answer": "The First Year of Studies program",
+    "gold_context": "All of Notre Dame's undergraduate students are a part of one of the five undergraduate colleges at the school or are in the First Year of Studies program."
+  },
+  {
+    "id": "5733a7bd4776f41900660f6b",
+    "question": "The granting of Doctorate degrees first occurred in what year at Notre Dame?",
+    "gold_answer": "1924",
+    "gold_context": "This changed in 1924 with formal requirements developed for graduate degrees, including offering Doctorate (PhD) degrees."
+  },
+  {
+    "id": "5733a7bd4776f41900660f6c",
+    "question": "What type of degree is an M.Div.?",
+    "gold_answer": "Master of Divinity",
+    "gold_context": "Most of the departments from the College of Arts and Letters offer PhD programs, while a professional Master of Divinity (M."
+  },
+  {
+    "id": "5733a7bd4776f41900660f6e",
+    "question": "Which program at Notre Dame offers a Master of Education degree?",
+    "gold_answer": "Alliance for Catholic Education",
+    "gold_context": "Additionally, the Alliance for Catholic Education program offers a Master of Education program where students study at the university during the summer and teach in Catholic elementary schools, middle schools, and high schools across the Southern United States for two school years."
+  },
+  {
+    "id": "5733a7bd4776f41900660f6a",
+    "question": "In what year was a Master of Arts course first offered at Notre Dame?",
+    "gold_answer": "1854",
+    "gold_context": "The university first offered graduate degrees, in the form of a Master of Arts (MA), in the 1854\u20131855 academic year."
+  },
+  {
+    "id": "5733a7bd4776f41900660f6d",
+    "question": "Which department at Notre Dame is the only one to not offer a PhD program?",
+    "gold_answer": "Department of Pre-Professional Studies",
+    "gold_context": "All of the departments in the College of Science offer PhD programs, except for the Department of Pre-Professional Studies."
+  },
+  {
+    "id": "5733ac31d058e614000b5ff6",
+    "question": "What is the title of Notre Dame's Theodore Hesburgh?",
+    "gold_answer": "President Emeritus of the University of Notre Dame",
+    "gold_context": "Hesburgh CSC, President Emeritus of the University of Notre Dame."
+  },
+  {
+    "id": "5733ac31d058e614000b5ff4",
+    "question": "In what year was the Joan B. Kroc Institute for International Peace Studies founded?",
+    "gold_answer": "1986",
+    "gold_context": "It was founded in 1986 through the donations of Joan B."
+  },
+  {
+    "id": "5733ac31d058e614000b5ff5",
+    "question": "To whom was John B. Kroc married?",
+    "gold_answer": "Ray Kroc",
+    "gold_context": "Kroc, the widow of McDonald's owner Ray Kroc."
+  },
+  {
+    "id": "5733ac31d058e614000b5ff7",
+    "question": "What company did Ray Kroc own?",
+    "gold_answer": "McDonald's",
+    "gold_context": "Kroc, the widow of McDonald's owner Ray Kroc."
+  },
+  {
+    "id": "5733ad384776f41900660fec",
+    "question": "How many stories tall is the main library at Notre Dame?",
+    "gold_answer": "14",
+    "gold_context": "The main building is the 14-story Theodore M."
+  },
+  {
+    "id": "5733ad384776f41900660fee",
+    "question": "In what year was the Theodore M. Hesburgh Library at Notre Dame finished?",
+    "gold_answer": "1963",
+    "gold_context": "Hesburgh Library, completed in 1963, which is the third building to house the main collection of books."
+  },
+  {
+    "id": "5733ad384776f41900660fef",
+    "question": "Which artist created the mural on the Theodore M. Hesburgh Library?",
+    "gold_answer": "Millard Sheets",
+    "gold_context": "The front of the library is adorned with the Word of Life mural designed by artist Millard Sheets."
+  },
+  {
+    "id": "5733ad384776f41900660ff0",
+    "question": "What is a common name to reference the mural created by Millard Sheets at Notre Dame?",
+    "gold_answer": "Touchdown Jesus",
+    "gold_context": "This mural is popularly known as \"Touchdown Jesus\" because of its proximity to Notre Dame Stadium and Jesus' arms appearing to make the signal for a touchdown."
+  },
+  {
+    "id": "5733ae924776f41900661014",
+    "question": "How many incoming students did Notre Dame admit in fall 2015?",
+    "gold_answer": "3,577",
+    "gold_context": "Notre Dame is known for its competitive admissions, with the incoming class enrolling in fall 2015 admitting 3,577 from a pool of 18,156 (19."
+  },
+  {
+    "id": "5733ae924776f41900661015",
+    "question": "Where does Notre Dame rank in terms of academic profile among research universities in the US?",
+    "gold_answer": "the top 10 to 15 in the nation",
+    "gold_context": "The academic profile of the enrolled class continues to rate among the top 10 to 15 in the nation for national research universities."
+  },
+  {
+    "id": "5733ae924776f41900661017",
+    "question": "How many miles does the average student at Notre Dame travel to study there?",
+    "gold_answer": "more than 750 miles",
+    "gold_context": "Admitted students came from 1,311 high schools and the average student traveled more than 750 miles to Notre Dame, making it arguably the most representative university in the United States."
+  },
+  {
+    "id": "5733afd3d058e614000b6045",
+    "question": "Where did U.S. News & World Report rank Notre Dame in its 2015-2016 university rankings?",
+    "gold_answer": "18th overall",
+    "gold_context": "In 2015-2016, Notre Dame ranked 18th overall among \"national universities\" in the United States in U."
+  },
+  {
+    "id": "5733afd3d058e614000b6047",
+    "question": "Forbes.com placed Notre Dame at what position compared to other US research universities?",
+    "gold_answer": "8th",
+    "gold_context": "In 2015-2016, Notre Dame ranked 18th overall among \"national universities\" in the United States in U."
+  },
+  {
+    "id": "5733afd3d058e614000b6048",
+    "question": "The undergrad school at the Mendoza College of Business was ranked where according to BusinessWeek?",
+    "gold_answer": "1st overall",
+    "gold_context": "BusinessWeek ranks Mendoza College of Business undergraduate school as 1st overall."
+  },
+  {
+    "id": "5733afd3d058e614000b6046",
+    "question": "In 2014 what entity named Notre Dame 10th best of all American universities?",
+    "gold_answer": "USA Today",
+    "gold_context": "In 2014, USA Today ranked Notre Dame 10th overall for American universities based on data from College Factual."
+  },
+  {
+    "id": "5733b0fb4776f41900661043",
+    "question": "What was the lifespan of John Augustine Zahm?",
+    "gold_answer": "1851\u20131921",
+    "gold_context": "One of Carrier's students was Father John Augustine Zahm (1851\u20131921) who was made Professor and Co-Director of the Science Department at age 23 and by 1900 was a nationally prominent scientist and naturalist."
+  },
+  {
+    "id": "5733b0fb4776f41900661044",
+    "question": "What program did John Augustine Zahm come to co-direct at Nore Dame?",
+    "gold_answer": "the Science Department",
+    "gold_context": "One of Carrier's students was Father John Augustine Zahm (1851\u20131921) who was made Professor and Co-Director of the Science Department at age 23 and by 1900 was a nationally prominent scientist and naturalist."
+  },
+  {
+    "id": "5733b0fb4776f41900661045",
+    "question": "What book did John Zahm write in 1896?",
+    "gold_answer": "Evolution and Dogma",
+    "gold_context": "His book Evolution and Dogma (1896) defended certain aspects of evolutionary theory as true, and argued, moreover, that even the great Church teachers Thomas Aquinas and Augustine taught something like it."
+  },
+  {
+    "id": "5733b0fb4776f41900661042",
+    "question": "What professorship did Father Josh Carrier hold at Notre Dame?",
+    "gold_answer": "Professor of Chemistry and Physics",
+    "gold_context": "was Director of the Science Museum and the Library and Professor of Chemistry and Physics until 1874."
+  },
+  {
+    "id": "5733b1da4776f41900661068",
+    "question": "In what year did Albert Zahm begin comparing aeronatical models at Notre Dame?",
+    "gold_answer": "1882",
+    "gold_context": "In 1882, Albert Zahm (John Zahm's brother) built an early wind tunnel used to compare lift to drag of aeronautical models."
+  },
+  {
+    "id": "5733b1da4776f41900661069",
+    "question": "Which professor sent the first wireless message in the USA?",
+    "gold_answer": "Professor Jerome Green",
+    "gold_context": "Around 1899, Professor Jerome Green became the first American to send a wireless message."
+  },
+  {
+    "id": "5733b1da4776f4190066106a",
+    "question": "In what year did Jerome Green send his first wireless message?",
+    "gold_answer": "Around 1899",
+    "gold_context": "Around 1899, Professor Jerome Green became the first American to send a wireless message."
+  },
+  {
+    "id": "5733b1da4776f4190066106b",
+    "question": "Which individual worked on projects at Notre Dame that eventually created neoprene?",
+    "gold_answer": "Father Julius Nieuwland",
+    "gold_context": "In 1931, Father Julius Nieuwland performed early work on basic reactions that was used to create neoprene."
+  },
+  {
+    "id": "5733b1da4776f41900661067",
+    "question": "What did the brother of John Zahm construct at Notre Dame?",
+    "gold_answer": "an early wind tunnel",
+    "gold_context": "In 1882, Albert Zahm (John Zahm's brother) built an early wind tunnel used to compare lift to drag of aeronautical models."
+  },
+  {
+    "id": "5733b2fe4776f4190066108f",
+    "question": "Work on a germ-free-life ended up in the creation of which Notre Dame institute?",
+    "gold_answer": "The Lobund Institute",
+    "gold_context": "The Lobund Institute grew out of pioneering research in germ-free-life which began in 1928."
+  },
+  {
+    "id": "5733b2fe4776f41900661091",
+    "question": "Around what time did Lobund of Notre Dame become independent?",
+    "gold_answer": "the 1940s",
+    "gold_context": "In the 1940s Lobund achieved independent status as a purely research organization and in 1950 was raised to the status of an Institute."
+  },
+  {
+    "id": "5733b2fe4776f41900661092",
+    "question": "In what year did Lobund at Notre Dame become an Institute?",
+    "gold_answer": "1950",
+    "gold_context": "In the 1940s Lobund achieved independent status as a purely research organization and in 1950 was raised to the status of an Institute."
+  },
+  {
+    "id": "5733b2fe4776f41900661093",
+    "question": "The Lobund Institute was merged into the Department of Biology at Notre Dame in what year?",
+    "gold_answer": "1958",
+    "gold_context": "In 1958 it was brought back into the Department of Biology as integral part of that department, but with its own program leading to the degree of PhD in Gnotobiotics."
+  },
+  {
+    "id": "5733b2fe4776f41900661090",
+    "question": "When did study of a germ-free-life begin at Notre Dame?",
+    "gold_answer": "1928",
+    "gold_context": "The Lobund Institute grew out of pioneering research in germ-free-life which began in 1928."
+  },
+  {
+    "id": "5733b3d64776f419006610a3",
+    "question": "Gurian created what in 1939 at Notre Dame?",
+    "gold_answer": "The Review of Politics",
+    "gold_context": "The Review of Politics was founded in 1939 by Gurian, modeled after German Catholic journals."
+  },
+  {
+    "id": "5733b3d64776f419006610a4",
+    "question": "What was the Review of Politics inspired by?",
+    "gold_answer": "German Catholic journals",
+    "gold_context": "The Review of Politics was founded in 1939 by Gurian, modeled after German Catholic journals."
+  },
+  {
+    "id": "5733b3d64776f419006610a5",
+    "question": "Over how many years did Gurian edit the Review of Politics at Notre Dame?",
+    "gold_answer": "44",
+    "gold_context": "For 44 years, the Review was edited by Gurian, Matthew Fitzsimons, Frederick Crosson, and Thomas Stritch."
+  },
+  {
+    "id": "5733b3d64776f419006610a6",
+    "question": "Thomas Stritch was an editor of which publican from Notre Dame?",
+    "gold_answer": "Review of Politics",
+    "gold_context": "The Review of Politics was founded in 1939 by Gurian, modeled after German Catholic journals."
+  },
+  {
+    "id": "5733b5344776f419006610dd",
+    "question": "Who was the president of Notre Dame in 2012?",
+    "gold_answer": "John Jenkins",
+    "gold_context": "The university president, John Jenkins, described his hope that Notre Dame would become \"one of the pre\u2013eminent research institutions in the world\" in his inaugural address."
+  },
+  {
+    "id": "5733b5344776f419006610de",
+    "question": "The Kellogg Institute for International Studies is part of which university?",
+    "gold_answer": "Notre Dame",
+    "gold_context": "The university president, John Jenkins, described his hope that Notre Dame would become \"one of the pre\u2013eminent research institutions in the world\" in his inaugural address."
+  },
+  {
+    "id": "5733b5344776f419006610df",
+    "question": "What does the Kroc Institute at Notre Dame focus on?",
+    "gold_answer": "International Peace studies",
+    "gold_context": "The university has many multi-disciplinary institutes devoted to research in varying fields, including the Medieval Institute, the Kellogg Institute for International Studies, the Kroc Institute for International Peace studies, and the Center for Social Concerns."
+  },
+  {
+    "id": "5733b5344776f419006610e0",
+    "question": "In what year did Notre Dame begin to host the Global Adaptation Index?",
+    "gold_answer": "2013",
+    "gold_context": "As of 2013, the university is home to the Notre Dame Global Adaptation Index which ranks countries annually based on how vulnerable they are to climate change and how prepared they are to adapt."
+  },
+  {
+    "id": "5733b5344776f419006610e1",
+    "question": "What threat does the Global Adaptation Index study?",
+    "gold_answer": "climate change",
+    "gold_context": "As of 2013, the university is home to the Notre Dame Global Adaptation Index which ranks countries annually based on how vulnerable they are to climate change and how prepared they are to adapt."
+  },
+  {
+    "id": "5733b5df4776f41900661105",
+    "question": "How many undergrads were attending Notre Dame in 2014?",
+    "gold_answer": "8,448",
+    "gold_context": "In 2014 the Notre Dame student body consisted of 12,179 students, with 8,448 undergraduates, 2,138 graduate and professional and 1,593 professional (Law, M."
+  },
+  {
+    "id": "5733b5df4776f41900661106",
+    "question": "What percentage of students at Notre Dame are the children of former Notre Dame students?",
+    "gold_answer": "21\u201324%",
+    "gold_context": "Around 21\u201324% of students are children of alumni, and although 37% of students come from the Midwestern United States, the student body represents all 50 states and 100 countries."
+  },
+  {
+    "id": "5733b5df4776f41900661107",
+    "question": "How many teams participate in the Notre Dame Bookstore Basketball tournament?",
+    "gold_answer": "over 700",
+    "gold_context": "\" The annual Bookstore Basketball tournament is the largest outdoor five-on-five tournament in the world with over 700 teams participating each year, while the Notre Dame Men's Boxing Club hosts the annual Bengal Bouts tournament that raises money for the Holy Cross Missions in Bangladesh."
+  },
+  {
+    "id": "5733b5df4776f41900661108",
+    "question": "For what cause is money raised at the Bengal Bouts tournament at Notre Dame?",
+    "gold_answer": "the Holy Cross Missions in Bangladesh",
+    "gold_context": "\" The annual Bookstore Basketball tournament is the largest outdoor five-on-five tournament in the world with over 700 teams participating each year, while the Notre Dame Men's Boxing Club hosts the annual Bengal Bouts tournament that raises money for the Holy Cross Missions in Bangladesh."
+  },
+  {
+    "id": "5733b5df4776f41900661109",
+    "question": "How many students in total were at Notre Dame in 2014?",
+    "gold_answer": "12,179",
+    "gold_context": "In 2014 the Notre Dame student body consisted of 12,179 students, with 8,448 undergraduates, 2,138 graduate and professional and 1,593 professional (Law, M."
+  },
+  {
+    "id": "5733b699d058e614000b6118",
+    "question": "What percentage of undergrads live on the Notre Dame campus?",
+    "gold_answer": "80%",
+    "gold_context": "About 80% of undergraduates and 20% of graduate students live on campus."
+  },
+  {
+    "id": "5733b699d058e614000b6119",
+    "question": "How many student housing areas are reserved for Notre Dame's graduate students?",
+    "gold_answer": "four",
+    "gold_context": "The majority of the graduate students on campus live in one of four graduate housing complexes on campus, while all on-campus undergraduates live in one of the 29 residence halls."
+  },
+  {
+    "id": "5733b699d058e614000b611a",
+    "question": "How many dorms for males are on the Notre Dame campus?",
+    "gold_answer": "15",
+    "gold_context": "Because of the religious affiliation of the university, all residence halls are single-sex, with 15 male dorms and 14 female dorms."
+  },
+  {
+    "id": "5733b699d058e614000b611b",
+    "question": "What amount of the graduate student body at Notre Dame live on the campus?",
+    "gold_answer": "20%",
+    "gold_context": "About 80% of undergraduates and 20% of graduate students live on campus."
+  },
+  {
+    "id": "5733b699d058e614000b611c",
+    "question": "There are how many dorms for females at Notre Dame?",
+    "gold_answer": "14",
+    "gold_context": "Because of the religious affiliation of the university, all residence halls are single-sex, with 15 male dorms and 14 female dorms."
+  },
+  {
+    "id": "5733b7f74776f4190066112d",
+    "question": "What is Congregation of Holy Cross in Latin?",
+    "gold_answer": "Congregatio a Sancta Cruce",
+    "gold_context": "The university is affiliated with the Congregation of Holy Cross (Latin: Congregatio a Sancta Cruce, abbreviated postnominals: \"CSC\")."
+  },
+  {
+    "id": "5733b7f74776f4190066112e",
+    "question": "What percentage of Notre Dame students feel they are Christian?",
+    "gold_answer": "more than 93%",
+    "gold_context": "While religious affiliation is not a criterion for admission, more than 93% of students identify as Christian, with over 80% of the total being Catholic."
+  },
+  {
+    "id": "5733b7f74776f4190066112f",
+    "question": "How often is Catholic mass held at Notre Dame in a week?",
+    "gold_answer": "over 100 times",
+    "gold_context": "Collectively, Catholic Mass is celebrated over 100 times per week on campus, and a large campus ministry program provides for the faith needs of the community."
+  },
+  {
+    "id": "5733b7f74776f41900661130",
+    "question": "How many chapels are on the Notre Dame campus?",
+    "gold_answer": "Fifty-seven",
+    "gold_context": "Fifty-seven chapels are located throughout the campus."
+  },
+  {
+    "id": "5733b7f74776f41900661131",
+    "question": "What amount of the student body of Notre Dame identifies as Catholic?",
+    "gold_answer": "over 80%",
+    "gold_context": "While religious affiliation is not a criterion for admission, more than 93% of students identify as Christian, with over 80% of the total being Catholic."
+  },
+  {
+    "id": "57338653d058e614000b5c84",
+    "question": "What was the music hall at Notre Dame called?",
+    "gold_answer": "Washington Hall",
+    "gold_context": "Eventually becoming known as Washington Hall, it hosted plays and musical acts put on by the school."
+  },
+  {
+    "id": "57338653d058e614000b5c81",
+    "question": "In what year was the Main Building at Notre Dame razed in a fire?",
+    "gold_answer": "1879",
+    "gold_context": "This Main Building, and the library collection, was entirely destroyed by a fire in April 1879, and the school closed immediately and students were sent home."
+  },
+  {
+    "id": "57338653d058e614000b5c83",
+    "question": "On what date was the rebuilding of The Main Building begun at Notre Dame after the fire that claimed the previous?",
+    "gold_answer": "17th of May",
+    "gold_context": "Construction was started on the 17th of May and by the incredible zeal of administrator and workers the building was completed before the fall semester of 1879."
+  },
+  {
+    "id": "57338653d058e614000b5c85",
+    "question": "What did the Science Hall at Notre Dame come to be known as?",
+    "gold_answer": "LaFortune Student Center",
+    "gold_context": "By 1880, a science program was established at the university, and a Science Hall (today LaFortune Student Center) was built in 1883."
+  },
+  {
+    "id": "57338724d058e614000b5c9f",
+    "question": "What type of education was pushed at Notre Dame before its embracing of national standards?",
+    "gold_answer": "scholastic and classical",
+    "gold_context": "In 1919 Father James Burns became president of Notre Dame, and in three years he produced an academic revolution that brought the school up to national standards by adopting the elective system and moving away from the university's traditional scholastic and classical emphasis."
+  },
+  {
+    "id": "57338724d058e614000b5ca1",
+    "question": "Which college did Notre Dame add in 1921?",
+    "gold_answer": "College of Commerce",
+    "gold_context": "By 1921, with the addition of the College of Commerce, Notre Dame had grown from a small college to a university with five colleges and a professional law school."
+  },
+  {
+    "id": "57338724d058e614000b5c9d",
+    "question": "In 1919 a new president of Notre Dame was named, who was it?",
+    "gold_answer": "Father James Burns",
+    "gold_context": "In 1919 Father James Burns became president of Notre Dame, and in three years he produced an academic revolution that brought the school up to national standards by adopting the elective system and moving away from the university's traditional scholastic and classical emphasis."
+  },
+  {
+    "id": "57338724d058e614000b5c9e",
+    "question": "Over how many years did the change to national standards undertaken at Notre Dame in the early 20th century take place?",
+    "gold_answer": "three years",
+    "gold_context": "In 1919 Father James Burns became president of Notre Dame, and in three years he produced an academic revolution that brought the school up to national standards by adopting the elective system and moving away from the university's traditional scholastic and classical emphasis."
+  },
+  {
+    "id": "57338724d058e614000b5ca0",
+    "question": "Those who attended a Jesuit college may have been forbidden from joining which Law School due to the curricula at the Jesuit institution?",
+    "gold_answer": "Harvard Law School",
+    "gold_context": "Their graduates were shut out of Harvard Law School for that reason."
+  },
+  {
+    "id": "573387acd058e614000b5cb1",
+    "question": "The Notre Dame football team got a new head coach in 1918, who was it?",
+    "gold_answer": "Knute Rockne",
+    "gold_context": "Knute Rockne became head coach in 1918."
+  },
+  {
+    "id": "573387acd058e614000b5cb2",
+    "question": "What was the amount of wins Knute Rockne attained at Notre Dame while head coach?",
+    "gold_answer": "105",
+    "gold_context": "Under Rockne, the Irish would post a record of 105 wins, 12 losses, and five ties."
+  },
+  {
+    "id": "573387acd058e614000b5cb5",
+    "question": "In what year did the team lead by Knute Rockne win the Rose Bowl?",
+    "gold_answer": "1925",
+    "gold_context": "During his 13 years the Irish won three national championships, had five undefeated seasons, won the Rose Bowl in 1925, and produced players such as George Gipp and the \"Four Horsemen\"."
+  },
+  {
+    "id": "573387acd058e614000b5cb3",
+    "question": "How many years was Knute Rockne head coach at Notre Dame?",
+    "gold_answer": "13",
+    "gold_context": "During his 13 years the Irish won three national championships, had five undefeated seasons, won the Rose Bowl in 1925, and produced players such as George Gipp and the \"Four Horsemen\"."
+  },
+  {
+    "id": "573387acd058e614000b5cb4",
+    "question": "How many national titles were won when Knute Rockne coached at Notre Dame?",
+    "gold_answer": "three",
+    "gold_context": "During his 13 years the Irish won three national championships, had five undefeated seasons, won the Rose Bowl in 1925, and produced players such as George Gipp and the \"Four Horsemen\"."
+  },
+  {
+    "id": "573388ce4776f41900660cc3",
+    "question": "Catholic people identified with Notre Dame, what religious group did people feel Yale represented?",
+    "gold_answer": "the Protestant establishment",
+    "gold_context": "Catholics rallied up around the team and listen to the games on the radio, especially when it knocked off the schools that symbolized the Protestant establishment in America \u2014 Harvard, Yale, Princeton, and Army."
+  },
+  {
+    "id": "573388ce4776f41900660cc4",
+    "question": "Notre Dame students had a showdown in 1924 with which anti-catholic group?",
+    "gold_answer": "the Ku Klux Klan",
+    "gold_context": "The most remarkable episode of violence was the clash between Notre Dame students and the Ku Klux Klan in 1924."
+  },
+  {
+    "id": "573388ce4776f41900660cc5",
+    "question": "What type of event did the Klan intend to have at Notre Dame in March of 1924?",
+    "gold_answer": "a week-long Klavern",
+    "gold_context": "The Klan decided to have a week-long Klavern in South Bend."
+  },
+  {
+    "id": "573388ce4776f41900660cc6",
+    "question": "Where did Notre Dame students and the KKK have their encounter?",
+    "gold_answer": "South Bend",
+    "gold_context": "The Klan decided to have a week-long Klavern in South Bend."
+  },
+  {
+    "id": "57338a51d058e614000b5cf0",
+    "question": "Which person became vice-president of Notre Dame in 1933?",
+    "gold_answer": "Father John Francis O'Hara",
+    "gold_context": "Holy Cross Father John Francis O'Hara was elected vice-president in 1933 and president of Notre Dame in 1934."
+  },
+  {
+    "id": "57338a51d058e614000b5cf1",
+    "question": "Who was the president of Notre Dame in 1934?",
+    "gold_answer": "Father John Francis O'Hara",
+    "gold_context": "Holy Cross Father John Francis O'Hara was elected vice-president in 1933 and president of Notre Dame in 1934."
+  },
+  {
+    "id": "57338a51d058e614000b5cf2",
+    "question": "Irvin Abell was given what award by Notre Dame?",
+    "gold_answer": "Laetare Medal",
+    "gold_context": "Ford, Irvin Abell, and Josephine Brownson for the Laetare Medal, instituted in 1883."
+  },
+  {
+    "id": "57338a51d058e614000b5cf3",
+    "question": "Which year was the Laetare Medal first given out at Notre Dame?",
+    "gold_answer": "1883",
+    "gold_context": "Ford, Irvin Abell, and Josephine Brownson for the Laetare Medal, instituted in 1883."
+  },
+  {
+    "id": "57338a51d058e614000b5cf4",
+    "question": "For whos glory did Father O'Hara believed that the Notre Dame football team played?",
+    "gold_answer": "God",
+    "gold_context": "He wrote, \"Notre Dame football is a spiritual service because it is played for the honor and glory of God and of his Blessed Mother."
+  },
+  {
+    "id": "5733926d4776f41900660d8e",
+    "question": "Around the time that Rev. Cavanaugh became president of Notre Dame by how much did the undergrad student body of Notre Dame increase?",
+    "gold_answer": "more than half",
+    "gold_context": "Cavanaugh's legacy at Notre Dame in the post-war years was devoted to raising academic standards and reshaping the university administration to suit it to an enlarged educational mission and an expanded student body and stressing advanced studies and research at a time when Notre Dame quadrupled in student census, undergraduate enrollment increased by more than half, and graduate student enrollment grew fivefold."
+  },
+  {
+    "id": "5733926d4776f41900660d8f",
+    "question": "Which institute involving animal life did Cavanaugh create at Notre Dame?",
+    "gold_answer": "Lobund Institute for Animal Studies",
+    "gold_context": "Cavanaugh also established the Lobund Institute for Animal Studies and Notre Dame's Medieval Institute."
+  },
+  {
+    "id": "5733926d4776f41900660d91",
+    "question": "What is O'Shaughnessy Hall of Notre Dame formerly known as?",
+    "gold_answer": "Hall of Liberal Arts",
+    "gold_context": "Cavanaugh also presided over the construction of the Nieuwland Science Hall, Fisher Hall, and the Morris Inn, as well as the Hall of Liberal Arts (now O'Shaughnessy Hall), made possible by a donation from I."
+  },
+  {
+    "id": "5733926d4776f41900660d90",
+    "question": "Outside of an institute studying animals, what other institute did Cavanugh create at Notre Dame?",
+    "gold_answer": "Medieval Institute",
+    "gold_context": "Cavanaugh also established the Lobund Institute for Animal Studies and Notre Dame's Medieval Institute."
+  },
+  {
+    "id": "573393184776f41900660da6",
+    "question": "What was the lifespan of Theodore Hesburgh?",
+    "gold_answer": "1917\u20132015",
+    "gold_context": ", (1917\u20132015) served as president for 35 years (1952\u201387) of dramatic transformations."
+  },
+  {
+    "id": "573393184776f41900660da8",
+    "question": "In the time that Hesburgh was president of Notre Dame by what factor did the operating budget increase?",
+    "gold_answer": "18",
+    "gold_context": "In that time the annual operating budget rose by a factor of 18 from $9."
+  },
+  {
+    "id": "573393184776f41900660da9",
+    "question": "What was the size of the Notre Dame endowment when Theodore Hesburgh became president?",
+    "gold_answer": "$9 million",
+    "gold_context": "6 million, and the endowment by a factor of 40 from $9 million to $350 million, and research funding by a factor of 20 from $735,000 to $15 million."
+  },
+  {
+    "id": "573393184776f41900660da7",
+    "question": "During what years was Theodor Hesburgh president of Notre Dame?",
+    "gold_answer": "1952\u201387",
+    "gold_context": ", (1917\u20132015) served as president for 35 years (1952\u201387) of dramatic transformations."
+  },
+  {
+    "id": "573393184776f41900660daa",
+    "question": "How many faculty members were at Notre Dame when Hesburgh left the role of president?",
+    "gold_answer": "950",
+    "gold_context": "Enrollment nearly doubled from 4,979 to 9,600, faculty more than doubled 389 to 950, and degrees awarded annually doubled from 1,212 to 2,500."
+  },
+  {
+    "id": "573393e1d058e614000b5dc2",
+    "question": "What type of educational institute is Hesburgh given credit for creating at Notre Dame?",
+    "gold_answer": "coeducational",
+    "gold_context": "Hesburgh is also credited with transforming the face of Notre Dame by making it a coeducational institution."
+  },
+  {
+    "id": "573393e1d058e614000b5dc4",
+    "question": "Which role did Charles Sheedy have at Notre Dame?",
+    "gold_answer": "Dean of Arts and Letters",
+    "gold_context": ", Notre Dame's Dean of Arts and Letters, \"certain features formerly considered advantageous and enviable are now seen as anachronistic and out of place."
+  },
+  {
+    "id": "573393e1d058e614000b5dc5",
+    "question": "What title did Thomas Blantz have at Notre Dame?",
+    "gold_answer": "Vice President of Student Affairs",
+    "gold_context": ", Notre Dame's Vice President of Student Affairs, added that coeducation \"opened up a whole other pool of very bright students."
+  },
+  {
+    "id": "573393e1d058e614000b5dc6",
+    "question": "In what year did Notre Dame have its earliest undergraduate that was female?",
+    "gold_answer": "1971",
+    "gold_context": "In 1971 Mary Ann Proctor became the first female undergraduate; she transferred from St."
+  },
+  {
+    "id": "573393e1d058e614000b5dc3",
+    "question": "With what institute did Notre Dame agree to an exchange program in the 1960s?",
+    "gold_answer": "Saint Mary's College",
+    "gold_context": "In the mid-1960s Notre Dame and Saint Mary's College developed a co-exchange program whereby several hundred students took classes not offered at their home institution, an arrangement that added undergraduate women to a campus that already had a few women in the graduate schools."
+  },
+  {
+    "id": "573394c84776f41900660ddd",
+    "question": "During what years was Edward Malloy president of Notre Dame?",
+    "gold_answer": "1987\u20132005",
+    "gold_context": ", (1987\u20132005), there was a rapid growth in the school's reputation, faculty, and resources."
+  },
+  {
+    "id": "573394c84776f41900660ddf",
+    "question": "What was the SAT score, on average, at Notre Dame when Edward Malloy became president?",
+    "gold_answer": "1240",
+    "gold_context": "He increased the faculty by more than 500 professors; the academic quality of the student body has improved dramatically, with the average SAT score rising from 1240 to 1360; the number of minority students more than doubled; the endowment grew from $350 million to more than $3 billion; the annual operating budget rose from $177 million to more than $650 million; and annual research funding improved from $15 million to more than $70 million."
+  },
+  {
+    "id": "573394c84776f41900660de0",
+    "question": "When Malloy became president of Notre Dame what was the size of the endowment?",
+    "gold_answer": "$350 million",
+    "gold_context": "He increased the faculty by more than 500 professors; the academic quality of the student body has improved dramatically, with the average SAT score rising from 1240 to 1360; the number of minority students more than doubled; the endowment grew from $350 million to more than $3 billion; the annual operating budget rose from $177 million to more than $650 million; and annual research funding improved from $15 million to more than $70 million."
+  },
+  {
+    "id": "573394c84776f41900660de1",
+    "question": "When Malloy reached the end of his time as president how much annuals funding for research did Notre Dame have?",
+    "gold_answer": "more than $70 million",
+    "gold_context": "He increased the faculty by more than 500 professors; the academic quality of the student body has improved dramatically, with the average SAT score rising from 1240 to 1360; the number of minority students more than doubled; the endowment grew from $350 million to more than $3 billion; the annual operating budget rose from $177 million to more than $650 million; and annual research funding improved from $15 million to more than $70 million."
+  },
+  {
+    "id": "573394c84776f41900660dde",
+    "question": "The amount of professors at Notre Dame increased by what amount under Malloy?",
+    "gold_answer": "500",
+    "gold_context": "He increased the faculty by more than 500 professors; the academic quality of the student body has improved dramatically, with the average SAT score rising from 1240 to 1360; the number of minority students more than doubled; the endowment grew from $350 million to more than $3 billion; the annual operating budget rose from $177 million to more than $650 million; and annual research funding improved from $15 million to more than $70 million."
+  },
+  {
+    "id": "5733974d4776f41900660e17",
+    "question": "When did John Jenkins become the president of Notre Dame?",
+    "gold_answer": "2005",
+    "gold_context": "Since 2005, Notre Dame has been led by John I."
+  },
+  {
+    "id": "5733974d4776f41900660e18",
+    "question": "In terms of the amount of presidents Notre Dame has had, where is John Jenkins on the list?",
+    "gold_answer": "17th",
+    "gold_context": ", the 17th president of the university."
+  },
+  {
+    "id": "5733974d4776f41900660e19",
+    "question": "Who was the Notre Dame president that preceded John Jenkins?",
+    "gold_answer": "Malloy",
+    "gold_context": "Jenkins took over the position from Malloy on July 1, 2005."
+  },
+  {
+    "id": "5733974d4776f41900660e1a",
+    "question": "Which arena was constructed under Jenkins at Notre Dame?",
+    "gold_answer": "Compton Family Ice Arena",
+    "gold_context": "During his tenure, Notre Dame has increased its endowment, enlarged its student body, and undergone many construction projects on campus, including Compton Family Ice Arena, a new architecture hall, additional residence halls, and the Campus Crossroads, a $400m enhancement and expansion of Notre Dame Stadium."
+  },
+  {
+    "id": "5733974d4776f41900660e1b",
+    "question": "How much money was spent on enhancing Notre Dame Stadium under John Jenkins?",
+    "gold_answer": "$400m",
+    "gold_context": "During his tenure, Notre Dame has increased its endowment, enlarged its student body, and undergone many construction projects on campus, including Compton Family Ice Arena, a new architecture hall, additional residence halls, and the Campus Crossroads, a $400m enhancement and expansion of Notre Dame Stadium."
+  },
+  {
+    "id": "573398164776f41900660e21",
+    "question": "Which congregation is in charge of the Old College at Notre Dame?",
+    "gold_answer": "Congregation of Holy Cross",
+    "gold_context": "The Old College building has become one of two seminaries on campus run by the Congregation of Holy Cross."
+  },
+  {
+    "id": "573398164776f41900660e22",
+    "question": "What structure is found on the location of the original church of Father Sorin at Notre Dame?",
+    "gold_answer": "Basilica of the Sacred Heart",
+    "gold_context": "The current Basilica of the Sacred Heart is located on the spot of Fr."
+  },
+  {
+    "id": "573398164776f41900660e23",
+    "question": "In which architectural style is the Basilica of the Sacred Heart at Notre Dame made?",
+    "gold_answer": "French Revival",
+    "gold_context": "It is built in French Revival style and it is decorated by stained glass windows imported directly from France."
+  },
+  {
+    "id": "573398164776f41900660e24",
+    "question": "Which individual painted the inside of the Basilica of the Sacred Heart at Notre Dame?",
+    "gold_answer": "Luigi Gregori",
+    "gold_context": "The interior was painted by Luigi Gregori, an Italian painter invited by Fr."
+  },
+  {
+    "id": "573398164776f41900660e25",
+    "question": "In what year was the Grotto of Our Lady of Lourdes at Notre Dame constructed?",
+    "gold_answer": "1896",
+    "gold_context": "The Grotto of Our Lady of Lourdes, which was built in 1896, is a replica of the original in Lourdes, France."
+  },
+  {
+    "id": "573398ebd058e614000b5e67",
+    "question": "In what year did the student union building at Notre Dame get renamed to LaFortune Center?",
+    "gold_answer": "1950",
+    "gold_context": "Zahm, but in 1950 it was converted to a student union building and named LaFortune Center, after Joseph LaFortune, an oil executive from Tulsa, Oklahoma."
+  },
+  {
+    "id": "573398ebd058e614000b5e68",
+    "question": "After which individual was the LaFortune Center Notre Dame named?",
+    "gold_answer": "Joseph LaFortune",
+    "gold_context": "Zahm, but in 1950 it was converted to a student union building and named LaFortune Center, after Joseph LaFortune, an oil executive from Tulsa, Oklahoma."
+  },
+  {
+    "id": "573398ebd058e614000b5e69",
+    "question": "How large in square feet is the LaFortune Center at Notre Dame?",
+    "gold_answer": "83,000 square feet",
+    "gold_context": "Commonly known as \"LaFortune\" or \"LaFun,\" it is a 4-story building of 83,000 square feet that provides the Notre Dame community with a meeting place for social, recreational, cultural, and educational activities."
+  },
+  {
+    "id": "57339a5bd058e614000b5e91",
+    "question": "How many halls are at Notre Dame that house students?",
+    "gold_answer": "29",
+    "gold_context": "Over the years 29 residence halls have been built to accommodate students and each has been constructed with its own chapel."
+  },
+  {
+    "id": "57339a5bd058e614000b5e92",
+    "question": "Which library was built at Notre Dame in 1963?",
+    "gold_answer": "Theodore Hesburgh Library",
+    "gold_context": "Many academic building were added together with a system of libraries, the most prominent of which is the Theodore Hesburgh Library, built in 1963 and today containing almost 4 million books."
+  },
+  {
+    "id": "57339a5bd058e614000b5e93",
+    "question": "How many books are housed at the Theodore Hesburgh Library?",
+    "gold_answer": "almost 4 million",
+    "gold_context": "Many academic building were added together with a system of libraries, the most prominent of which is the Theodore Hesburgh Library, built in 1963 and today containing almost 4 million books."
+  },
+  {
+    "id": "57339a5bd058e614000b5e94",
+    "question": "Construction for which hall started on March 8th 2007 at Notre Dame?",
+    "gold_answer": "Duncan Hall",
+    "gold_context": "Additionally, a new residence for men, Duncan Hall, was begun on March 8, 2007, and began accepting residents for the Fall 2008 semester."
+  },
+  {
+    "id": "57339a5bd058e614000b5e95",
+    "question": "Which baseball stadium is found at Notre Dame?",
+    "gold_answer": "Frank Eck Stadium",
+    "gold_context": "Also, there are many outdoor fields, as the Frank Eck Stadium for baseball."
+  },
+  {
+    "id": "57339b36d058e614000b5ea3",
+    "question": "In what year did Notre Dame create the Office of Sustainability?",
+    "gold_answer": "2008",
+    "gold_context": "The University of Notre Dame has made being a sustainability leader an integral part of its mission, creating the Office of Sustainability in 2008 to achieve a number of goals in the areas of power generation, design and construction, waste reduction, procurement, food services, transportation, and water."
+  },
+  {
+    "id": "57339b36d058e614000b5ea4",
+    "question": "What percentage of the food served at Notre Dame is locally grown?",
+    "gold_answer": "40%",
+    "gold_context": "Notre Dame's dining services sources 40% of its food locally and offers sustainably caught seafood as well as many organic, fair-trade, and vegan options."
+  },
+  {
+    "id": "57339b36d058e614000b5ea5",
+    "question": "Notre Dame got a \"B\" for its sustainability practices from which entity?",
+    "gold_answer": "Sustainable Endowments Institute",
+    "gold_context": "On the Sustainable Endowments Institute's College Sustainability Report Card 2010, University of Notre Dame received a \"B\" grade."
+  },
+  {
+    "id": "57339b36d058e614000b5ea6",
+    "question": "Gustavo Gutierrez is faculty of which institute?",
+    "gold_answer": "Kroc Institute for International Peace Studies",
+    "gold_context": "The university also houses the Kroc Institute for International Peace Studies."
+  },
+  {
+    "id": "57339c184776f41900660ea5",
+    "question": "In what year did Notre Dame first have a facility in England?",
+    "gold_answer": "1968",
+    "gold_context": "The university has had a presence in London, England, since 1968."
+  },
+  {
+    "id": "57339c184776f41900660ea6",
+    "question": "At which location is the London Center operated by Notre Dame found?",
+    "gold_answer": "1 Suffolk Street in Trafalgar Square",
+    "gold_context": "Since 1998, its London center has been based in the former United University Club at 1 Suffolk Street in Trafalgar Square."
+  },
+  {
+    "id": "57339c184776f41900660ea7",
+    "question": "Notre Dame has a center in Beijing, what is it referred to as?",
+    "gold_answer": "Global Gateways",
+    "gold_context": "Other Global Gateways are located in Beijing, Chicago, Dublin, Jerusalem and Rome."
+  },
+  {
+    "id": "57339c184776f41900660ea8",
+    "question": "In what year did the Suffolk Street location start to house a Notre Dame facility?",
+    "gold_answer": "1998",
+    "gold_context": "Since 1998, its London center has been based in the former United University Club at 1 Suffolk Street in Trafalgar Square."
+  },
+  {
+    "id": "5733a3cbd058e614000b5f3f",
+    "question": "What was Notre Dame's first college?",
+    "gold_answer": "The College of Arts and Letters",
+    "gold_context": "The College of Arts and Letters was established as the university's first college in 1842 with the first degrees given in 1849."
+  }
+]

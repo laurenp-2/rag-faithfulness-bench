@@ -44,10 +44,6 @@ class FaithfulnessScorer:
             max_length=512,
         )
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
-
     def score(
         self,
         generated_answer: str,
@@ -94,10 +90,7 @@ class FaithfulnessScorer:
             "gold_context_faithful": round(gold_context_faithful, 4),
         }
 
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
+   
     def _nli_scores(self, premise: str, hypothesis: str) -> dict[str, float]:
         """Run NLI and return a dict with 'entailment', 'neutral', 'contradiction' scores."""
         result = self._nli(f"{premise} [SEP] {hypothesis}")
@@ -115,9 +108,6 @@ class FaithfulnessScorer:
         return normalised
 
 
-# ---------------------------------------------------------------------------
-# Standalone metric functions (no model needed)
-# ---------------------------------------------------------------------------
 
 def _normalise(text: str) -> str:
     """Lowercase, strip punctuation and extra whitespace."""

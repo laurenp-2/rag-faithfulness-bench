@@ -5,8 +5,8 @@ transformers>=4.40.0
 torch>=2.2.0
 faiss-cpu>=1.8.0
 
-# LLM API
-anthropic>=0.25.0
+# Local LLM
+ollama>=0.2.0
 
 # Data processing
 datasets>=2.19.0
@@ -17,4 +17,3 @@ scikit-learn>=1.4.0
 
 # Utilities
 tqdm>=4.66.0
-python-dotenv>=1.0.0

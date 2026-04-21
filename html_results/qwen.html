@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qwen2.5_7b Results</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 40px auto; padding: 0 24px; color: #1a1a1a; background: #fff; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #666; margin-bottom: 2rem; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: #555; margin-bottom: 1.5rem; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .chart-wrap { position: relative; width: 100%; height: 340px; margin-bottom: 2.5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { font-size: 12px; font-weight: 500; color: #666; text-align: right; padding: 8px 12px; border-bottom: 1px solid #e5e5e5; }
+  th.left { text-align: left; }
+  td { text-align: right; padding: 8px 12px; border-bottom: 1px solid #f0f0f0; font-variant-numeric: tabular-nums; }
+  td.label { text-align: left; font-weight: 500; color: #1a1a1a; }
+  tr:last-child td { border-bottom: none; }
+  .note { font-size: 12px; color: #888; margin-top: 1rem; }
+  .section { font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin: 2rem 0 0.75rem; }
+</style>
+</head>
+<body>
+<h1>Qwen2.5_7b Results</h1>
+<p class="subtitle">llama3.2:3b · 600 total records · 4 perturbation type(s)</p>
+
+<div class="section">Metrics by perturbation type</div>
+<div class="legend"><span><span class="dot" style="background:#378ADD"></span>Original</span>
+<span><span class="dot" style="background:#1D9E75"></span>Paraphrase</span>
+<span><span class="dot" style="background:#EF9F27"></span>Entity swap</span>
+<span><span class="dot" style="background:#D85A30"></span>Negation</span>
+</div>
+
+<div class="chart-wrap">
+  <canvas id="chart" role="img" aria-label="Grouped bar chart of RAG robustness metrics across perturbation types"></canvas>
+</div>
+
+<div class="section">Summary table</div>
+<table>
+  <thead><tr><th class="left">Condition</th><th>N</th><th>Faith↑</th><th>EM↑</th><th>F1↑</th><th>Abstain↑/↓</th><th>Halluc↓</th><th>Contradict↓</th></tr></thead>
+  <tbody><tr><td class="label">Original</td><td>150</td><td style="color:#BA7517;font-weight:500">53%</td><td style="color:#D85A30;font-weight:500">15%</td><td style="color:#BA7517;font-weight:500">37%</td><td style="color:#BA7517;font-weight:500">29%</td><td style="color:#1D9E75;font-weight:500">7%</td><td style="color:#BA7517;font-weight:500">23%</td></tr>
+<tr><td class="label">Paraphrase</td><td>150</td><td style="color:#BA7517;font-weight:500">48%</td><td style="color:#D85A30;font-weight:500">11%</td><td style="color:#BA7517;font-weight:500">31%</td><td style="color:#BA7517;font-weight:500">33%</td><td style="color:#1D9E75;font-weight:500">10%</td><td style="color:#BA7517;font-weight:500">31%</td></tr>
+<tr><td class="label">Entity swap</td><td>150</td><td style="color:#BA7517;font-weight:500">34%</td><td style="color:#1D9E75;font-weight:500">4%</td><td style="color:#1D9E75;font-weight:500">18%</td><td style="color:#BA7517;font-weight:500">52%</td><td style="color:#1D9E75;font-weight:500">12%</td><td style="color:#BA7517;font-weight:500">42%</td></tr>
+<tr><td class="label">Negation</td><td>150</td><td style="color:#BA7517;font-weight:500">30%</td><td style="color:#1D9E75;font-weight:500">7%</td><td style="color:#1D9E75;font-weight:500">20%</td><td style="color:#BA7517;font-weight:500">57%</td><td style="color:#1D9E75;font-weight:500">8%</td><td style="color:#BA7517;font-weight:500">33%</td></tr>
+</tbody>
+</table>
+<p class="note">Color coding: <span style="color:#1D9E75">green</span> = desirable for that metric/condition · <span style="color:#BA7517">orange</span> = borderline · <span style="color:#D85A30">red</span> = concerning. Thresholds: high-is-good metrics green ≥60%, red &lt;30%; low-is-good metrics green ≤20%, red &gt;40%.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+new Chart(document.getElementById('chart'), {
+  type: 'bar',
+  data: {
+    labels: ["Faithfulness", "Exact match", "Token F1", "Abstention", "Hallucination", "Contradiction"],
+    datasets: [{"label": "Original", "data": [0.53, 0.153, 0.366, 0.293, 0.073, 0.233], "backgroundColor": "#378ADD"}, {"label": "Paraphrase", "data": [0.478, 0.107, 0.311, 0.333, 0.1, 0.313], "backgroundColor": "#1D9E75"}, {"label": "Entity swap", "data": [0.341, 0.04, 0.178, 0.52, 0.12, 0.42], "backgroundColor": "#EF9F27"}, {"label": "Negation", "data": [0.303, 0.067, 0.195, 0.567, 0.08, 0.327], "backgroundColor": "#D85A30"}]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y * 100).toFixed(0) + '%'
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { font: { size: 12 }, maxRotation: 0 } },
+      y: {
+        min: 0, max: 1,
+        ticks: { callback: v => (v*100) + '%', font: { size: 12 } },
+        grid: { color: 'rgba(0,0,0,0.06)' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

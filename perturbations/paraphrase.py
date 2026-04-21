@@ -1,17 +1,15 @@
 """
 Paraphrase perturbation (control condition).
 
-Calls the Claude API to rephrase the gold context while preserving all
-factual content.  This is the control condition: surface form changes but
-meaning is intact.  A robust RAG model should be unaffected by this
-perturbation.
+Uses a local Ollama model to rephrase the gold context while preserving all
+factual content. This is the control condition: surface form changes but
+meaning is intact. A robust RAG model should be unaffected by this perturbation.
+
+Requires Ollama running locally: https://ollama.com
+    ollama pull llama3.2
 """
 
-import os
-import anthropic
-from dotenv import load_dotenv
-
-load_dotenv()
+import ollama
 
 _SYSTEM_PROMPT = (
     "You are a precise paraphrasing assistant. "
@@ -22,28 +20,21 @@ _SYSTEM_PROMPT = (
 )
 
 
-def paraphrase_context(context: str, model: str = "claude-haiku-4-5-20251001") -> str:
+def paraphrase_context(context: str, model: str = "llama3.2:3b") -> str:
     """
     Return a paraphrase of *context* that preserves factual content.
-
-    Uses Claude Haiku for speed and cost efficiency since this is
-    a high-volume preprocessing step.
     """
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError("ANTHROPIC_API_KEY is not set.")
-
-    client = anthropic.Anthropic(api_key=api_key)
-    message = client.messages.create(
+    response = ollama.chat(
         model=model,
-        max_tokens=256,
-        system=_SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": context}],
+        messages=[
+            {"role": "system", "content": _SYSTEM_PROMPT},
+            {"role": "user", "content": context},
+        ],
     )
-    return message.content[0].text.strip()
+    return response["message"]["content"].strip()
 
 
-def batch_paraphrase(contexts: list[str], model: str = "claude-haiku-4-5-20251001") -> list[str]:
+def batch_paraphrase(contexts: list[str], model: str = "llama3.2:3b") -> list[str]:
     """Paraphrase a list of contexts, returning results in the same order."""
     results = []
     for ctx in contexts:
@@ -51,7 +42,7 @@ def batch_paraphrase(contexts: list[str], model: str = "claude-haiku-4-5-2025100
             results.append(paraphrase_context(ctx, model=model))
         except Exception as e:
             print(f"[paraphrase] Error on context '{ctx[:60]}...': {e}")
-            results.append(ctx)  # fall back to original on error
+            results.append(ctx) 
     return results
 
 

@@ -10,10 +10,6 @@ import random
 import re
 import spacy
 
-# ---------------------------------------------------------------------------
-# Lookup tables: entity type → list of plausible swap candidates
-# Kept intentionally small; extend for a fuller benchmark.
-# ---------------------------------------------------------------------------
 SWAP_CANDIDATES: dict[str, list[str]] = {
     "PERSON": [
         "Steve Jobs", "Elon Musk", "Jeff Bezos", "Mark Zuckerberg",
@@ -76,7 +72,7 @@ def swap_entities(context: str, seed: int | None = None) -> str:
     nlp = _get_nlp()
     doc = nlp(context)
 
-    # Collect entities that have swap candidates, preserving order
+
     swappable = [
         ent for ent in doc.ents
         if ent.label_ in SWAP_CANDIDATES
@@ -85,14 +81,12 @@ def swap_entities(context: str, seed: int | None = None) -> str:
     if not swappable:
         return context
 
-    # Pick one entity to swap (prefer the first substantive one)
     target = rng.choice(swappable)
     candidates = [c for c in SWAP_CANDIDATES[target.label_] if c.lower() != target.text.lower()]
     if not candidates:
         return context
 
     replacement = rng.choice(candidates)
-    # Use regex so the replacement is exact (handles sentence boundaries)
     perturbed = re.sub(
         r"\b" + re.escape(target.text) + r"\b",
         replacement,

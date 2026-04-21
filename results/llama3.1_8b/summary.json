@@ -1,0 +1,38 @@
+{
+  "original": {
+    "n": 150,
+    "faithfulness_rate": 0.571,
+    "correctness_em": 0.2133,
+    "correctness_f1": 0.4576,
+    "hallucination_rate": 0.0533,
+    "abstention_rate": 0.26,
+    "contradiction_rate": 0.2067
+  },
+  "entity_swap": {
+    "n": 150,
+    "faithfulness_rate": 0.3609,
+    "correctness_em": 0.1,
+    "correctness_f1": 0.2255,
+    "hallucination_rate": 0.12,
+    "abstention_rate": 0.48,
+    "contradiction_rate": 0.4
+  },
+  "negation": {
+    "n": 150,
+    "faithfulness_rate": 0.3959,
+    "correctness_em": 0.16,
+    "correctness_f1": 0.3034,
+    "hallucination_rate": 0.0733,
+    "abstention_rate": 0.4333,
+    "contradiction_rate": 0.3067
+  },
+  "paraphrase": {
+    "n": 150,
+    "faithfulness_rate": 0.5067,
+    "correctness_em": 0.1267,
+    "correctness_f1": 0.3232,
+    "hallucination_rate": 0.1,
+    "abstention_rate": 0.3867,
+    "contradiction_rate": 0.3533
+  }
+}
