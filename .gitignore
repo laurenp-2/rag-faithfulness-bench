@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# Large raw dataset files
+data/squad.json
+
+# Generated HTML reports
+html_results/
+
+.claude/
