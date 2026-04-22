@@ -4,23 +4,23 @@
 >
 > Lauren Pothuru · Cornell University · Anote Take-Home Research Assignment
 
-Standard RAG benchmarks measure whether models produce correct answers. This benchmark asks a harder question: **when retrieval is wrong, does the model know it's wrong?**
+Standard RAG benchmarks measure whether models produce correct answers. This benchmark asks a different question: **when retrieval is wrong, does the model know it's wrong?**
 
-Full details are in the [draft paper](writeup/latex.tex) and blog post (coming soon).
+Full details are in the [draft paper](writeup/latex.tex).
 
 ---
 
 ## What this is
 
-A lightweight benchmark that stress-tests RAG pipelines by systematically corrupting retrieved context and measuring how models respond. We apply three perturbation types to gold context passages — entity swaps, negations, and paraphrases (control) — then score faithfulness, hallucination, and abstention across each condition.
+A lightweight benchmark that stress-tests RAG pipelines by corrupting retrieved context and measuring how models respond. We apply three perturbation types to gold context passages (entity swaps, negations, and paraphrases/control) then score faithfulness, hallucination, and abstention across each condition.
 
-This isolates a blind spot in existing evaluation frameworks (RAGAS, ARES): they measure end-to-end correctness but do not expose what happens when the *retrieved context itself* is the source of the error.
+This isolates a blind spot in existing evaluation frameworks (RAGAS, ARES): they measure end-to-end correctness but do not expose what happens when the retrieved context is the source of the error.
 
 ---
 
 ## Setup
 
-**Requirements:** Python 3.10+, [Ollama](https://ollama.com) (runs locally, no API key needed).
+**Requirements:** Python 3.10+, [Ollama](https://ollama.com) (no API key/credits needed).
 
 ```bash
 # 1. Pull a model
