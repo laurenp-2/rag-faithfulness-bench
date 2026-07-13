@@ -15,4 +15,8 @@ data/squad.json
 # Generated HTML reports
 html_results/
 
+# Local result archives
+results_backup/
+results_backup_full_1000/
+
 .claude/
