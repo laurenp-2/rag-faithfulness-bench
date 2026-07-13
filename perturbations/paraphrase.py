@@ -30,6 +30,7 @@ def paraphrase_context(context: str, model: str = "llama3.2:3b") -> str:
             {"role": "system", "content": _SYSTEM_PROMPT},
             {"role": "user", "content": context},
         ],
+        options={"temperature": 0},
     )
     return response["message"]["content"].strip()
 

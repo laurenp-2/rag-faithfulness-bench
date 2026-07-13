@@ -60,6 +60,7 @@ def _generate_ollama(user_message: str, model: str) -> str:
             {"role": "system", "content": _SYSTEM_PROMPT},
             {"role": "user", "content": user_message},
         ],
+        options={"temperature": 0, "num_predict": 150},
     )
     return response["message"]["content"].strip()
 
@@ -87,6 +88,7 @@ def _generate_anthropic(user_message: str, model: str) -> str:
         system=_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
         max_tokens=150,
+        temperature=0.0,
     )
     return response.content[0].text.strip()
 

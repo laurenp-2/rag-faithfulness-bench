@@ -53,7 +53,28 @@ from eval.metrics import compute_summary, print_summary_table
 
 def _is_api_model(model: str) -> bool:
     """Return True for models that call an external API (no Ollama paraphrase needed)."""
-    return model.startswith("gpt-") or model.startswith("o1") or model.startswith("claude-")
+    return (
+        model.startswith("gpt-")
+        or model.startswith("o1")
+        or model.startswith("o3")
+        or model.startswith("claude-")
+    )
+
+
+def _write_json_atomic(path: Path, data: Any) -> None:
+    tmp_path = path.with_name(f"{path.name}.tmp")
+    with open(tmp_path, "w") as f:
+        json.dump(data, f, indent=2)
+    tmp_path.replace(path)
+
+
+def _handle_error(stage: str, question: str, ptype: str | None, exc: Exception, skip_errors: bool) -> None:
+    location = f" ({ptype})" if ptype else ""
+    message = f"[{stage}] Error on '{question[:60]}'{location}: {exc}"
+    if skip_errors:
+        print(message)
+        return
+    raise RuntimeError(message) from exc
 
 
 def apply_perturbations(gold_context: str, model: str) -> dict[str, str]:
@@ -75,16 +96,31 @@ def run_benchmark(
     k: int = 3,
     limit: int | None = None,
     include_similarity: bool = False,
+    skip_errors: bool = False,
+    save_every: int = 25,
 ) -> list[dict]:
     data_path = Path(data_path)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
+    if k < 1:
+        raise ValueError(f"k must be >= 1, got {k}")
+    if save_every < 1:
+        raise ValueError(f"save_every must be >= 1, got {save_every}")
 
     with open(data_path) as f:
         qa_pairs: list[dict] = json.load(f)
 
-    if limit:
+    if limit is not None:
         qa_pairs = qa_pairs[:limit]
+
+    if not qa_pairs:
+        _write_json_atomic(output_path, [])
+        summary = compute_summary([])
+        summary_path = output_path.parent / "summary.json"
+        _write_json_atomic(summary_path, summary)
+        print(f"\nNo QA pairs to run. Empty results written to {output_path}")
+        print(f"Summary written to {summary_path}")
+        return []
 
     scorer = FaithfulnessScorer()
     retriever = Retriever()
@@ -98,7 +134,7 @@ def run_benchmark(
         try:
             variants = apply_perturbations(gold_context, model=model)
         except Exception as e:
-            print(f"[perturb] Skipping '{question[:60]}': {e}")
+            _handle_error("perturb", question, None, e, skip_errors)
             continue
 
         for ptype, perturbed_ctx in variants.items():
@@ -120,7 +156,7 @@ def run_benchmark(
                     similarity_score=top_score if include_similarity else None,
                 )
             except Exception as e:
-                print(f"[generate] Error on '{question[:40]}' ({ptype}): {e}")
+                _handle_error("generate", question, ptype, e, skip_errors)
                 continue
 
             try:
@@ -131,7 +167,7 @@ def run_benchmark(
                     gold_context=gold_context,
                 )
             except Exception as e:
-                print(f"[score] Error on '{question[:40]}' ({ptype}): {e}")
+                _handle_error("score", question, ptype, e, skip_errors)
                 continue
 
             result: dict[str, Any] = {
@@ -148,17 +184,17 @@ def run_benchmark(
                 "scores": scores,
             }
             all_results.append(result)
+            if len(all_results) % save_every == 0:
+                _write_json_atomic(output_path, all_results)
 
-    with open(output_path, "w") as f:
-        json.dump(all_results, f, indent=2)
+    _write_json_atomic(output_path, all_results)
     print(f"\nResults written to {output_path}")
 
     summary = compute_summary(all_results)
     print_summary_table(summary)
 
     summary_path = output_path.parent / "summary.json"
-    with open(summary_path, "w") as f:
-        json.dump(summary, f, indent=2)
+    _write_json_atomic(summary_path, summary)
     print(f"Summary written to {summary_path}")
 
     return all_results
@@ -185,6 +221,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Supply FAISS similarity score as a prompt prefix (Section 5.6 experiment)",
     )
+    parser.add_argument(
+        "--skip-errors",
+        action="store_true",
+        help="Continue after per-example errors. By default, errors fail fast to avoid biased results.",
+    )
+    parser.add_argument(
+        "--save-every",
+        type=int,
+        default=25,
+        help="Write an atomic partial outputs.json checkpoint every N completed records.",
+    )
     return parser.parse_args()
 
 
@@ -203,4 +250,6 @@ if __name__ == "__main__":
         k=args.k,
         limit=args.limit,
         include_similarity=args.include_similarity,
+        skip_errors=args.skip_errors,
+        save_every=args.save_every,
     )

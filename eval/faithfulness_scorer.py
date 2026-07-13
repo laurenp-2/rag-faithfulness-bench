@@ -28,9 +28,6 @@ from transformers import pipeline as hf_pipeline
 
 
 _NLI_MODEL = "cross-encoder/nli-deberta-v3-base"
-_LABEL_MAP = {"ENTAILMENT": 2, "NEUTRAL": 1, "CONTRADICTION": 0}
-
-
 class FaithfulnessScorer:
     def __init__(self, nli_model: str = _NLI_MODEL, device: int | None = None):
         if device is None:
@@ -90,14 +87,15 @@ class FaithfulnessScorer:
             "gold_context_faithful": round(gold_context_faithful, 4),
         }
 
-   
     def _nli_scores(self, premise: str, hypothesis: str) -> dict[str, float]:
         """Run NLI and return a dict with 'entailment', 'neutral', 'contradiction' scores."""
-        result = self._nli(f"{premise} [SEP] {hypothesis}")
-        # result is a list of [{"label": ..., "score": ...}, ...]
-        scores = {item["label"].lower(): item["score"] for item in result[0]}
+        result = self._nli({"text": premise, "text_pair": hypothesis})
+        # Transformers versions differ: top_k=None may return either a list of
+        # labels or a batch-sized list containing that list.
+        labels = result[0] if result and isinstance(result[0], list) else result
+        scores = {item["label"].lower(): item["score"] for item in labels}
         # Normalise key names
-        normalised = {}
+        normalised = {"entailment": 0.0, "neutral": 0.0, "contradiction": 0.0}
         for raw_label, score in scores.items():
             if "entail" in raw_label:
                 normalised["entailment"] = score
