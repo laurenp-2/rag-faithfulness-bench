@@ -1,0 +1,174 @@
+{
+  "results_path": "/Users/laurenpothuru/Documents/dev/anote/rag-faithfulness-bench/results/llama3.2_3b_sim/outputs.json",
+  "n_records": 800,
+  "cross_tabulation": {
+    "original": {
+      "person": {
+        "n": 22,
+        "abstention_rate": 0.1818,
+        "context_follower_rate": 0.2727,
+        "hallucination_rate": 0.0909,
+        "correctness_f1_mean": 0.6165,
+        "faithfulness_mean": 0.7612
+      },
+      "org": {
+        "n": 28,
+        "abstention_rate": 0.3571,
+        "context_follower_rate": 0.3571,
+        "hallucination_rate": 0.1786,
+        "correctness_f1_mean": 0.4635,
+        "faithfulness_mean": 0.6329
+      },
+      "location": {
+        "n": 16,
+        "abstention_rate": 0.3125,
+        "context_follower_rate": 0.5,
+        "hallucination_rate": 0.125,
+        "correctness_f1_mean": 0.4935,
+        "faithfulness_mean": 0.6323
+      },
+      "date_number": {
+        "n": 46,
+        "abstention_rate": 0.2391,
+        "context_follower_rate": 0.6957,
+        "hallucination_rate": 0.0,
+        "correctness_f1_mean": 0.2942,
+        "faithfulness_mean": 0.7516
+      },
+      "other": {
+        "n": 88,
+        "abstention_rate": 0.1818,
+        "context_follower_rate": 0.5568,
+        "hallucination_rate": 0.0227,
+        "correctness_f1_mean": 0.4818,
+        "faithfulness_mean": 0.772
+      }
+    },
+    "entity_swap": {
+      "person": {
+        "n": 22,
+        "abstention_rate": 0.3182,
+        "context_follower_rate": 0.3182,
+        "hallucination_rate": 0.1364,
+        "correctness_f1_mean": 0.4509,
+        "faithfulness_mean": 0.6621
+      },
+      "org": {
+        "n": 28,
+        "abstention_rate": 0.5357,
+        "context_follower_rate": 0.4286,
+        "hallucination_rate": 0.1786,
+        "correctness_f1_mean": 0.2049,
+        "faithfulness_mean": 0.4951
+      },
+      "location": {
+        "n": 16,
+        "abstention_rate": 0.5,
+        "context_follower_rate": 0.3125,
+        "hallucination_rate": 0.1875,
+        "correctness_f1_mean": 0.3359,
+        "faithfulness_mean": 0.4065
+      },
+      "date_number": {
+        "n": 46,
+        "abstention_rate": 0.3913,
+        "context_follower_rate": 0.5217,
+        "hallucination_rate": 0.0435,
+        "correctness_f1_mean": 0.1494,
+        "faithfulness_mean": 0.5583
+      },
+      "other": {
+        "n": 88,
+        "abstention_rate": 0.3068,
+        "context_follower_rate": 0.4659,
+        "hallucination_rate": 0.0341,
+        "correctness_f1_mean": 0.4118,
+        "faithfulness_mean": 0.6541
+      }
+    },
+    "negation": {
+      "person": {
+        "n": 22,
+        "abstention_rate": 0.2727,
+        "context_follower_rate": 0.1364,
+        "hallucination_rate": 0.0909,
+        "correctness_f1_mean": 0.5726,
+        "faithfulness_mean": 0.6193
+      },
+      "org": {
+        "n": 28,
+        "abstention_rate": 0.4643,
+        "context_follower_rate": 0.2143,
+        "hallucination_rate": 0.0714,
+        "correctness_f1_mean": 0.3591,
+        "faithfulness_mean": 0.4636
+      },
+      "location": {
+        "n": 16,
+        "abstention_rate": 0.375,
+        "context_follower_rate": 0.25,
+        "hallucination_rate": 0.0625,
+        "correctness_f1_mean": 0.5183,
+        "faithfulness_mean": 0.532
+      },
+      "date_number": {
+        "n": 46,
+        "abstention_rate": 0.4348,
+        "context_follower_rate": 0.4565,
+        "hallucination_rate": 0.0217,
+        "correctness_f1_mean": 0.1949,
+        "faithfulness_mean": 0.4868
+      },
+      "other": {
+        "n": 88,
+        "abstention_rate": 0.2955,
+        "context_follower_rate": 0.4432,
+        "hallucination_rate": 0.0455,
+        "correctness_f1_mean": 0.3879,
+        "faithfulness_mean": 0.6133
+      }
+    },
+    "paraphrase": {
+      "person": {
+        "n": 22,
+        "abstention_rate": 0.3636,
+        "context_follower_rate": 0.1818,
+        "hallucination_rate": 0.0909,
+        "correctness_f1_mean": 0.5353,
+        "faithfulness_mean": 0.6339
+      },
+      "org": {
+        "n": 28,
+        "abstention_rate": 0.25,
+        "context_follower_rate": 0.5357,
+        "hallucination_rate": 0.0714,
+        "correctness_f1_mean": 0.3928,
+        "faithfulness_mean": 0.7049
+      },
+      "location": {
+        "n": 16,
+        "abstention_rate": 0.4375,
+        "context_follower_rate": 0.375,
+        "hallucination_rate": 0.1875,
+        "correctness_f1_mean": 0.3436,
+        "faithfulness_mean": 0.4723
+      },
+      "date_number": {
+        "n": 46,
+        "abstention_rate": 0.2826,
+        "context_follower_rate": 0.587,
+        "hallucination_rate": 0.0,
+        "correctness_f1_mean": 0.2886,
+        "faithfulness_mean": 0.6606
+      },
+      "other": {
+        "n": 88,
+        "abstention_rate": 0.2386,
+        "context_follower_rate": 0.5682,
+        "hallucination_rate": 0.0341,
+        "correctness_f1_mean": 0.3282,
+        "faithfulness_mean": 0.7102
+      }
+    }
+  }
+}

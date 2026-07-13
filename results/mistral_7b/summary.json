@@ -1,38 +1,38 @@
 {
   "original": {
-    "n": 150,
-    "faithfulness_rate": 0.3757,
-    "correctness_em": 0.1067,
-    "correctness_f1": 0.347,
-    "hallucination_rate": 0.04,
-    "abstention_rate": 0.2333,
-    "contradiction_rate": 0.16
+    "n": 1000,
+    "faithfulness_rate": 0.6668,
+    "correctness_em": 0.125,
+    "correctness_f1": 0.4148,
+    "hallucination_rate": 0.026,
+    "abstention_rate": 0.126,
+    "contradiction_rate": 0.106
   },
   "entity_swap": {
-    "n": 150,
-    "faithfulness_rate": 0.2687,
-    "correctness_em": 0.0533,
-    "correctness_f1": 0.2121,
-    "hallucination_rate": 0.0933,
-    "abstention_rate": 0.3867,
-    "contradiction_rate": 0.34
+    "n": 1000,
+    "faithfulness_rate": 0.5137,
+    "correctness_em": 0.071,
+    "correctness_f1": 0.292,
+    "hallucination_rate": 0.066,
+    "abstention_rate": 0.26,
+    "contradiction_rate": 0.238
   },
   "negation": {
-    "n": 150,
-    "faithfulness_rate": 0.2262,
-    "correctness_em": 0.0667,
-    "correctness_f1": 0.2242,
-    "hallucination_rate": 0.0533,
-    "abstention_rate": 0.58,
-    "contradiction_rate": 0.2067
+    "n": 1000,
+    "faithfulness_rate": 0.4029,
+    "correctness_em": 0.076,
+    "correctness_f1": 0.2617,
+    "hallucination_rate": 0.043,
+    "abstention_rate": 0.435,
+    "contradiction_rate": 0.187
   },
   "paraphrase": {
-    "n": 150,
-    "faithfulness_rate": 0.3765,
-    "correctness_em": 0.0733,
-    "correctness_f1": 0.2848,
-    "hallucination_rate": 0.0467,
-    "abstention_rate": 0.3467,
-    "contradiction_rate": 0.2333
+    "n": 1000,
+    "faithfulness_rate": 0.6274,
+    "correctness_em": 0.06,
+    "correctness_f1": 0.2981,
+    "hallucination_rate": 0.028,
+    "abstention_rate": 0.151,
+    "contradiction_rate": 0.127
   }
 }
