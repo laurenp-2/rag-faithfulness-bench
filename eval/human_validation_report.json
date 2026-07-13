@@ -1,0 +1,35 @@
+{
+  "n_annotated": 80,
+  "cohen_kappa_fluency": 0.3957,
+  "cohen_kappa_correctness": 0.4785,
+  "per_type": {
+    "original": {
+      "n": 20,
+      "avg_fluency": 3.0,
+      "avg_correctness": 3.0,
+      "pct_fluent": 1.0,
+      "pct_correct_intent": 1.0
+    },
+    "entity_swap": {
+      "n": 20,
+      "avg_fluency": 2.55,
+      "avg_correctness": 2.125,
+      "pct_fluent": 0.8,
+      "pct_correct_intent": 0.7
+    },
+    "negation": {
+      "n": 20,
+      "avg_fluency": 2.475,
+      "avg_correctness": 2.5,
+      "pct_fluent": 0.85,
+      "pct_correct_intent": 0.95
+    },
+    "paraphrase": {
+      "n": 20,
+      "avg_fluency": 2.875,
+      "avg_correctness": 2.275,
+      "pct_fluent": 1.0,
+      "pct_correct_intent": 0.75
+    }
+  }
+}

@@ -5,9 +5,9 @@ Workflow:
   1. Sample: python eval/human_validation.py sample --results results/llama3.2_3b/outputs.json
              Writes data/annotation_sample.json (50–100 examples across all perturbation types)
 
-  2. Annotate: open data/annotation_sample.json in any text editor / spreadsheet.
-               Fill in annotator_1_fluency, annotator_1_correctness fields.
-               A second annotator fills in annotator_2_fluency, annotator_2_correctness.
+  2. Annotate: open data/annotation_sample.json in any text editor / spreadsheet,
+               or use the terminal UI:
+               python eval/human_validation.py annotate
                Scale: 1 = poor, 2 = acceptable, 3 = good.
 
   3. Report: python eval/human_validation.py report --annotations data/annotation_sample.json
@@ -30,8 +30,10 @@ Rubric (also printed by `rubric` subcommand):
 from __future__ import annotations
 
 import argparse
+import difflib
 import json
 import random
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -238,6 +240,199 @@ def report(
 
 
 # ---------------------------------------------------------------------------
+# Terminal annotation UI
+# ---------------------------------------------------------------------------
+
+def annotate_terminal(
+    annotations_path: str | Path = ROOT / "data" / "annotation_sample.json",
+    annotator: int = 2,
+    include_complete: bool = False,
+    color: bool = True,
+) -> None:
+    """
+    Prompt for fluency, correctness, and notes in the terminal.
+
+    Saves the JSON file after every annotated example so the session can be resumed.
+    """
+    if annotator not in (1, 2):
+        raise ValueError("annotator must be 1 or 2")
+
+    path = Path(annotations_path)
+    with open(path) as f:
+        annotations = json.load(f)
+
+    fluency_key = f"annotator_{annotator}_fluency"
+    correctness_key = f"annotator_{annotator}_correctness"
+    notes_key = f"annotator_{annotator}_notes"
+
+    pending = [
+        idx for idx, item in enumerate(annotations)
+        if include_complete
+        or item.get(fluency_key) is None
+        or item.get(correctness_key) is None
+    ]
+
+    if not pending:
+        print(f"All examples already have annotator {annotator} grades.")
+        return
+
+    print("\nHuman validation terminal annotator")
+    print("=" * 44)
+    print(f"File: {path}")
+    print(f"Annotator: {annotator}")
+    print(f"Items to review: {len(pending)} / {len(annotations)}")
+    print("\nCommands at grade prompts: q = quit, s = skip, Enter = keep existing value")
+    print("\nFluency: 1 = broken, 2 = awkward/readable, 3 = fluent")
+    print("Correctness: 1 = failed, 2 = partial, 3 = clear success/faithful")
+
+    reviewed = 0
+    for position, idx in enumerate(pending, start=1):
+        item = annotations[idx]
+        _print_annotation_item(
+            item,
+            idx + 1,
+            len(annotations),
+            position,
+            len(pending),
+            color=color,
+        )
+
+        fluency = _prompt_grade("Fluency", current=item.get(fluency_key))
+        if fluency == "quit":
+            break
+        if fluency == "skip":
+            continue
+
+        correctness = _prompt_grade("Correctness", current=item.get(correctness_key))
+        if correctness == "quit":
+            break
+        if correctness == "skip":
+            continue
+
+        current_notes = item.get(notes_key, "") or ""
+        note_prompt = "Notes"
+        if current_notes:
+            note_prompt += f" [{current_notes}]"
+        note_prompt += ": "
+        notes = input(note_prompt).strip()
+        if not notes:
+            notes = current_notes
+
+        item[fluency_key] = fluency
+        item[correctness_key] = correctness
+        item[notes_key] = notes
+
+        with open(path, "w") as f:
+            json.dump(annotations, f, indent=2)
+
+        reviewed += 1
+        remaining = sum(
+            1 for a in annotations
+            if a.get(fluency_key) is None or a.get(correctness_key) is None
+        )
+        print(f"Saved. Remaining for annotator {annotator}: {remaining}")
+
+    print(f"\nSession complete. Annotated {reviewed} item(s).")
+    print(f"Saved to {path}")
+
+
+def _print_annotation_item(
+    item: dict,
+    absolute_idx: int,
+    total: int,
+    pending_idx: int,
+    pending_total: int,
+    color: bool = True,
+) -> None:
+    original = item.get("original_context", "")
+    perturbed = item.get("perturbed_context", "")
+    original_display, perturbed_display, changed = _highlight_context_diff(
+        original,
+        perturbed,
+        color=color,
+    )
+
+    print("\n" + "=" * 88)
+    print(f"Item {absolute_idx}/{total}  |  Pending {pending_idx}/{pending_total}")
+    print(f"Type: {item.get('perturbation_type', '')}")
+    print(f"ID: {item.get('id', '')}")
+    print("\nQuestion:")
+    print(item.get("question", ""))
+    if changed:
+        print("\nOriginal context (changed text highlighted red):")
+    else:
+        print("\nOriginal context (unchanged):")
+    print(original_display)
+    if changed:
+        print("\nPerturbed context (changed text highlighted green):")
+    else:
+        print("\nPerturbed context (unchanged):")
+    print(perturbed_display)
+
+
+def _highlight_context_diff(original: str, perturbed: str, color: bool = True) -> tuple[str, str, bool]:
+    if original == perturbed:
+        return original, perturbed, False
+
+    original_tokens = _diff_tokens(original)
+    perturbed_tokens = _diff_tokens(perturbed)
+    matcher = difflib.SequenceMatcher(a=original_tokens, b=perturbed_tokens, autojunk=False)
+
+    original_parts: list[str] = []
+    perturbed_parts: list[str] = []
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        original_text = "".join(original_tokens[i1:i2])
+        perturbed_text = "".join(perturbed_tokens[j1:j2])
+
+        if tag == "equal":
+            original_parts.append(original_text)
+            perturbed_parts.append(perturbed_text)
+        elif tag == "delete":
+            original_parts.append(_mark(original_text, "red", color))
+        elif tag == "insert":
+            perturbed_parts.append(_mark(perturbed_text, "green", color))
+        elif tag == "replace":
+            original_parts.append(_mark(original_text, "red", color))
+            perturbed_parts.append(_mark(perturbed_text, "green", color))
+
+    return "".join(original_parts), "".join(perturbed_parts), True
+
+
+def _diff_tokens(text: str) -> list[str]:
+    return re.findall(r"\s+|\S+", text)
+
+
+def _mark(text: str, color_name: str, color: bool) -> str:
+    if not text:
+        return text
+    if color:
+        codes = {
+            "red": "\033[1;31m",
+            "green": "\033[1;32m",
+        }
+        return f"{codes[color_name]}{text}\033[0m"
+    return f"[[{text}]]"
+
+
+def _prompt_grade(label: str, current: int | None = None) -> int | str:
+    while True:
+        suffix = f" [{current}]" if current is not None else ""
+        raw = input(f"{label} (1-3){suffix}: ").strip().lower()
+        if raw == "":
+            if current is not None:
+                return int(current)
+            print("Please enter 1, 2, 3, s, or q.")
+            continue
+        if raw in {"q", "quit", "exit"}:
+            return "quit"
+        if raw in {"s", "skip"}:
+            return "skip"
+        if raw in {"1", "2", "3"}:
+            return int(raw)
+        print("Please enter 1, 2, 3, s, or q.")
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -255,6 +450,20 @@ def parse_args() -> argparse.Namespace:
     rp.add_argument("--annotations", default=str(ROOT / "data" / "annotation_sample.json"))
     rp.add_argument("--output", default=str(ROOT / "eval" / "human_validation_report.json"))
 
+    ap = sub.add_parser("annotate", help="Grade annotation examples in the terminal")
+    ap.add_argument("--annotations", default=str(ROOT / "data" / "annotation_sample.json"))
+    ap.add_argument("--annotator", type=int, choices=[1, 2], default=2)
+    ap.add_argument(
+        "--include-complete",
+        action="store_true",
+        help="Review all examples, including ones already graded by this annotator",
+    )
+    ap.add_argument(
+        "--no-color",
+        action="store_true",
+        help="Use bracket markers instead of terminal colors for changed spans",
+    )
+
     sub.add_parser("rubric", help="Print annotation rubric")
     return parser.parse_args()
 
@@ -265,6 +474,13 @@ if __name__ == "__main__":
         sample_for_annotation(args.results, args.output, n_per_type=args.n, seed=args.seed)
     elif args.command == "report":
         report(args.annotations, args.output)
+    elif args.command == "annotate":
+        annotate_terminal(
+            annotations_path=args.annotations,
+            annotator=args.annotator,
+            include_complete=args.include_complete,
+            color=not args.no_color,
+        )
     elif args.command == "rubric":
         print("\nAnnotation Rubric")
         print("=" * 40)
