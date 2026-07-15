@@ -11,12 +11,14 @@
 \usepackage{cleveref}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{colortbl}
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage{geometry}
 \geometry{margin=1in}
-\usepackage{natbib}
+\setlength{\emergencystretch}{2em}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage{amssymb}
 \usepackage{placeins}
 
@@ -212,7 +214,7 @@ v1.1 training split. Each example has the format:
 \end{center}
 \Cref{tab:dataset-stats} reports dataset statistics.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Dataset statistics for the 1{,}000-example evaluation split.}
 \label{tab:dataset-stats}
@@ -237,7 +239,7 @@ in \Cref{sec:crosstab}; they were not stored in the base dataset.
 For each QA pair we generate four context variants. \Cref{tab:perturbations} summarizes
 the conditions.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Perturbation conditions. Each QA pair is evaluated under all four conditions.}
 \label{tab:perturbations}
@@ -366,7 +368,7 @@ prompt sensitivity.
 
 \Cref{tab:metrics} defines all six evaluation metrics.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Evaluation metrics, operationalization, and ideal direction on corrupted conditions.}
 \label{tab:metrics}
@@ -390,7 +392,7 @@ The faithfulness score is computed as:
   \text{hypothesis}=a)
 \end{equation}
 where $a$ is the generated answer and $c$ is the perturbed retrieved context, scored by
-\texttt{cross-encoder/nli-deberta-v3-base}.
+\texttt{cross-encoder/nli-\allowbreak deberta-v3-base}.
 
 We additionally define an \emph{abstention cliff score} to summarize each model's
 condition-sensitivity in a single value:
@@ -515,7 +517,7 @@ changing whether the model follows context. The core finding that entity swap an
 produce far larger drops remains robust. Full paraphrase diagnostics are reported in
 \Cref{tab:paraphrase-diagnostic}.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Paraphrase diagnostic: faithfulness and EM delta (paraphrase $-$ original).
   At $N=1{,}000$, faithfulness differences reach significance for some models,
@@ -555,7 +557,7 @@ behavior or stronger instruction-following that suppresses fabrication even when
 is corrupted. The primary failure mode under corrupted retrieval remains over-abstention
 rather than confabulation across all six models.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig1_hallucination_bars.pdf}
 \caption{Hallucination rate by model and perturbation condition across all six models.
@@ -592,7 +594,7 @@ from 14\% baseline to 32\% on entity swap and 44\% on negation
 Both closed-source models show more balanced detection across entity swap and negation
 than their open-weight counterparts.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig2_abstention_heatmap.pdf}
 \caption{Abstention rates by model and condition across all six models. Closed-source
@@ -607,7 +609,7 @@ than their open-weight counterparts.
 \Cref{tab:cliff-scores} reports cliff scores, effect sizes, and significance for all six
 models (see \Cref{eq:cliff} for the $\Delta_\text{abstain}$ definition).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Abstention cliff scores by model, sorted by $\Delta_\text{abstain}$.
   All cliffs significant at $p < .0001$; Cohen's $h$ computed via two-proportion
@@ -639,7 +641,7 @@ instruction-tuning methodology or RLHF signal --- factors that differ systematic
 between open-weight and closed-source development pipelines --- contributes to abstention
 calibration in ways that parameter count does not capture.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig3_cliff_scores.pdf}
 \caption{Abstention cliff score $\Delta_\text{abstain}$ by model. Closed-source models
@@ -667,7 +669,7 @@ condition its confidence explicitly on retrieval quality:
 We run this intervention on \texttt{llama3.2:3b} over a 200-example subset (800 total
 inferences). Results are summarized in \Cref{tab:similarity-ablation}.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Similarity score intervention ablation on \texttt{llama3.2:3b} ($n=200$
   examples). ECE computed over faithfulness bins; $\Delta_\text{abstain}$ as defined
@@ -734,7 +736,7 @@ $+0.173$ to $+0.244$. Closed-source models approach the upper bound of this rang
 remain far from ideal, indicating that the over-abstainer failure mode is systemic across
 current LLM families rather than specific to open-weight models.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.80\textwidth]{figures/fig4_taxonomy_scatter.pdf}
 \caption{Failure mode taxonomy. Each point is a (model, condition) pair plotted by
@@ -1168,7 +1170,7 @@ less.\\[6pt]
 models and both corrupted perturbation types ($N=1{,}000$ per cell, 6 models = 6{,}000
 records per perturbation type).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Error analysis category counts (all six models combined, corrupted conditions
   only). Cat.\ (a): correct despite corrupted context (parametric memory, EM true).
