@@ -14,6 +14,7 @@
 \pgfplotsset{compat=1.18}
 \usepackage{colortbl}
 \usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{enumitem}
 \usepackage{geometry}
 \geometry{margin=1in}
@@ -21,6 +22,12 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{amssymb}
 \usepackage{placeins}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
 
 \usepackage{mdframed}
 \definecolor{examplebg}{gray}{0.93}
@@ -39,29 +46,26 @@ in Retrieval-Augmented Generation}
 % ────────────────────────────────────────────────────────────────
 \FloatBarrier
 \begin{abstract}
-Retrieval-Augmented Generation (RAG) systems are widely deployed, yet existing evaluation
-frameworks measure only end-to-end answer quality and cannot isolate how generators behave
-when retrieval fails. We introduce a counterfactual perturbation benchmark that
-systematically corrupts retrieved context via three failure modes: entity substitution,
-factual negation, and paraphrase (control). We evaluate four open-weight LLMs
-(\texttt{llama3.2:3b}, \texttt{llama3.1:8b}, \texttt{mistral:7b}, \texttt{qwen2.5:7b})
-and two closed-source models (\texttt{gpt-4o-mini}, \texttt{claude-haiku})
-across 1{,}000 SQuAD v1.1 examples per condition ($N=24{,}000$ total).
-Faithfulness drops significantly on corrupted conditions ($p < .001$) and abstention rises
-across all models, though the abstention cliff is shallower than a well-calibrated model
-should exhibit. Hallucination rates remain low (0--9\%) across all conditions; the
-primary failure mode is indiscriminate refusal rather than confabulation. Closed-source
-models achieve the strongest abstention calibration
-($\Delta_\text{abstain} = +0.24$), while the Llama family shows the flattest,
-least condition-sensitive response ($\Delta_\text{abstain} = +0.17$--$0.19$).
-Supplying the retriever's similarity score as a prompt prefix reduces calibration error
-(ECE) by 60\% but does not improve selective abstention, suggesting that global and
-condition-sensitive calibration are distinct failure modes. Human validation of 80
-perturbation examples confirms pipeline quality (mean fluency 2.73, mean correctness 2.48,
-Cohen's $\kappa = 0.40$ for fluency and $\kappa = 0.48$ for correctness). Paraphrase and
-original conditions show small but detectable surface-form effects at $N=1{,}000$, while
-remaining far closer to each other than to corrupted conditions. We release the benchmark
-as an open-source toolkit with full evaluation scripts.
+Retrieval-augmented generation (RAG) depends on retrieved context, but common evaluations
+confound retrieval error with generator behavior. This paper introduces a counterfactual
+benchmark that changes a retrieved passage while holding the question, answer, and prompt
+fixed. The benchmark applies entity substitution, factual negation, and meaning-preserving
+paraphrase to 1{,}000 SQuAD v1.1 question-answer pairs. Six language models, four
+open-weight and two closed-source, are evaluated in every condition ($N=24{,}000$
+model-condition inputs). Relative to original context, mean NLI faithfulness on corrupted
+context decreases by 0.153--0.295 across models, and abstention rises by 13.4--30.9
+percentage points; paired 95\% confidence intervals exclude zero for every primary
+comparison. Hallucination is observed in 0--9\% of outputs, with some zero-event cells
+having nonzero uncertainty. The dominant failure is therefore neither uniformly faithful
+following nor pervasive fabrication, but insufficiently selective abstention. The two
+closed-source models have the largest abstention-cliff scores (0.241 and 0.244), while
+the two Llama models have the smallest (0.173 and 0.192). A matched, 200-example
+similarity-score ablation lowers a descriptive abstention-calibration discrepancy but also
+raises abstention on clean context, so it does not improve selective abstention. Human
+validation of 80 perturbations identifies predictable weaknesses in rule-based negation
+and entity substitution. The benchmark isolates a concrete retrieval-generation failure
+mode and provides evidence that calibration depends more on model family than parameter
+count in this setting.
 \end{abstract}
 
 % ────────────────────────────────────────────────────────────────
@@ -87,15 +91,14 @@ whether the retriever surfaced the wrong document or whether the generator faile
 reason correctly from a good one. TruLens and the TREC RAG Track~\cite{trec2024rag}
 similarly measure pipeline outputs without isolating fault.
 
-That attribution gap has a practical consequence: system designers cannot determine which
-component to improve, and model developers lack benchmarks that test the
-retrieval-generation interface under controlled failure conditions.
+That attribution gap prevents system designers from determining whether retrieval or
+generation warrants intervention. It also leaves model developers without a benchmark
+for the retrieval-generation interface under controlled failure conditions.
 
-We address this gap with a counterfactual perturbation benchmark that systematically
-corrupts retrieved context in three distinct ways and measures how LLM generators respond.
-The design rests on a simple idea: if we \emph{know} the context is wrong because we made
-it wrong, we can measure whether the model knows it too. We define four context conditions
-for each QA pair:
+The benchmark addresses this gap by systematically modifying retrieved context in three
+ways and measuring the resulting generator response. Because the modification is known,
+the source of a context error is controlled. Four context conditions are defined for each
+question-answer pair:
 
 \begin{itemize}[noitemsep]
   \item \textbf{Original}: unmodified gold context (baseline)
@@ -118,25 +121,20 @@ This paper addresses four research questions:
         graceful degradation?
 \end{enumerate}
 
-\noindent Our contributions are:
+\noindent The contributions are:
 \begin{itemize}[noitemsep]
-  \item A reproducible counterfactual RAG benchmark built on SQuAD
-        v1.1~\cite{rajpurkar2016squad}, evaluated at scale ($N=1{,}000$ examples,
-        $24{,}000$ total inferences) with full evaluation scripts released open-source.
-  \item Empirical evaluation across six models spanning open-weight and closed-source
-        families, yielding a $6 \times 4$ results matrix with full significance testing
-        and answer-type cross-tabulation.
+  \item A controlled counterfactual RAG benchmark built on SQuAD
+        v1.1~\cite{rajpurkar2016squad}, with 1{,}000 paired examples and four context
+        conditions per model.
+  \item An evaluation of six models spanning open-weight and closed-source families,
+        with paired confidence intervals and corrected paired tests for the primary
+        comparisons.
   \item A failure-mode taxonomy distinguishing three generator archetypes:
         \emph{context-follower}, \emph{hallucinator}, and \emph{over-abstainer}, with
-        evidence that closed-source models exhibit stronger abstention calibration than
-        open-weight models of comparable size.
-  \item An ablation showing that supplying retrieval similarity scores as a prompt prefix
-        improves global calibration (ECE $-60\%$) but not selective abstention, revealing
-        a distinction between global and condition-sensitive calibration failure modes.
-  \item Human validation of perturbation quality across 80 annotated examples with
-        inter-rater agreement reporting.
-  \item Practical guidance for RAG system designers on model selection and prompt
-        engineering for calibrated abstention.
+        evidence that model family is more predictive of abstention calibration than
+        parameter count in the evaluated set.
+  \item A matched similarity-score ablation and human validation of 80 perturbations,
+        which qualify the scope of the empirical findings.
 \end{itemize}
 
 The remainder of this paper is organized as follows. \Cref{sec:related} reviews related
@@ -152,43 +150,39 @@ implications. \Cref{sec:limitations} states limitations. \Cref{sec:conclusion} c
 \paragraph{RAG evaluation.}
 RAGAS~\cite{es2023ragas} and ARES~\cite{saadfalcon2023ares} score faithfulness and answer
 relevance using LLM judges, and the TREC RAG 2024 Track~\cite{trec2024rag} provides
-large-scale IR-style evaluation, but all three frameworks evaluate the final answer and
-the retrieved context together with no mechanism for holding retrieval quality constant.
-Our benchmark holds retrieval quality constant by construction and varies only the
-\emph{content} of the retrieved context in controlled ways, allowing us to attribute
-failures to the generator rather than the retriever.
+large-scale information-retrieval-style evaluation. These frameworks evaluate the final
+answer and retrieved context together, without holding retrieval quality constant. The
+present benchmark instead varies only the \emph{content} of retrieved context, supporting
+attribution of behavioral differences to the generator.
 
 \paragraph{Robustness to adversarial context.}
 Prior work on adversarial reading comprehension includes AddSent~\cite{jia2017adversarial},
 which appends distracting sentences to SQuAD passages, contrast sets via minimal manual
 perturbations~\cite{gardner2020contrast}, and counterfactual data
-augmentation~\cite{kaushik2020counterfactual}. Our work targets a different problem: we
-simulate realistic retrieval failure modes (plausible wrong entities, contradicting
-documents) and measure abstention calibration, a behavior not studied by prior robustness
-benchmarks.
+augmentation~\cite{kaushik2020counterfactual}. The present benchmark targets a different
+problem: it simulates plausible wrong entities and contradicting documents, then measures
+abstention calibration, a behavior not emphasized by prior robustness benchmarks.
 
 \paragraph{Hallucination, abstention, and irrelevant context.}
 TruthfulQA~\cite{lin2022truthfulqa} measures false statements on misconception-prone
 questions; calibration literature~\cite{kadavath2022language, xiong2024can} studies
 whether model confidence correlates with accuracy; and selective
 prediction~\cite{geifman2017selective} formalizes abstaining when confidence is low. Most
-relevant to our setting, Shi et al.~\cite{shi2023large} show that irrelevant context can
-mislead LLMs even when correct context is also present. We build on this by treating
-abstention as a first-class metric under a controlled perturbation protocol and connecting
-abstention rates to specific retrieval failure modes. CheckList~\cite{ribeiro2020checklist}
+relevant to this setting, Shi et al.~\cite{shi2023large} show that irrelevant context can
+mislead LLMs even when correct context is also present. This benchmark treats abstention
+as a first-class metric under a controlled perturbation protocol and connects abstention
+rates to specific retrieval failure modes. CheckList~\cite{ribeiro2020checklist}
 and ANLI~\cite{nie2020anli} establish the broader paradigm of behavioral testing via
-perturbations; our benchmark applies similar logic but centers on abstention calibration
+perturbations; this benchmark applies similar logic but centers on abstention calibration
 and production RAG failure modes.
 
 \paragraph{Open-weight vs.\ closed-source model behavior.}
-Recent work has begun systematically comparing open-weight and closed-source LLMs on
-reliability and calibration tasks~\cite{kadavath2022language, xiong2024can}. Closed-source
-models are generally found to express uncertainty more reliably, though the mechanisms
-behind this difference — instruction-tuning methodology, RLHF signal, or training data
-composition — remain poorly understood. Our benchmark provides a controlled setting for
-this comparison: by holding the prompt, task, and evaluation protocol constant across
-open-weight and closed-source models, we isolate abstention calibration as a measurable
-axis of difference between model families.
+Recent work compares open-weight and closed-source LLMs on reliability and calibration
+tasks~\cite{kadavath2022language, xiong2024can}. The mechanisms underlying observed
+differences, including instruction tuning, preference optimization, and training-data
+composition, remain uncertain. By holding the prompt, task, and evaluation protocol
+constant, the present study measures abstention calibration as one axis of difference
+between the evaluated model families.
 % ────────────────────────────────────────────────────────────────
 \FloatBarrier
 \section{Benchmark Design}
@@ -196,9 +190,9 @@ axis of difference between model families.
 
 \subsection{Seed Dataset}
 
-We draw seed data from SQuAD v1.1~\cite{rajpurkar2016squad}, a reading comprehension
+Seed data come from SQuAD v1.1~\cite{rajpurkar2016squad}, a reading-comprehension
 dataset of Wikipedia passages paired with crowd-sourced questions and extractive answers.
-We apply the following filters to obtain clean, unambiguous examples:
+The following filters obtain clean, unambiguous examples:
 
 \begin{itemize}[noitemsep]
   \item The gold context must be extractable as a single sentence containing the gold answer
@@ -207,7 +201,7 @@ We apply the following filters to obtain clean, unambiguous examples:
   \item The gold answer string must appear verbatim in the selected context sentence.
 \end{itemize}
 
-Filtering yields a dataset of 1{,}000 QA pairs, shuffled randomly from the full SQuAD
+Filtering yields 1{,}000 question-answer pairs, sampled randomly from the full SQuAD
 v1.1 training split. Each example has the format:
 \begin{center}
 \texttt{\{id, question, gold\_answer, gold\_context\}}
@@ -230,20 +224,20 @@ Avg.\ question length (tokens)     & 10.0 \\
 \end{tabular}
 \end{table}
 
-Answer type labels (person, organization, location, date/number) were derived during
-error analysis using spaCy NER applied to gold answers and are reported per-condition
-in \Cref{sec:crosstab}; they were not stored in the base dataset.
+Answer-type labels (person, organization, location, date/number) were derived during
+error analysis using named-entity recognition applied to gold answers. They are reported
+in \Cref{sec:crosstab} and were not used to construct the base dataset.
 
 \subsection{Perturbation Types}
 
-For each QA pair we generate four context variants. \Cref{tab:perturbations} summarizes
-the conditions.
+Four context variants are generated for each question-answer pair. \Cref{tab:perturbations}
+summarizes the conditions.
 
 \begin{table}[htbp]
 \centering
 \caption{Perturbation conditions. Each QA pair is evaluated under all four conditions.}
 \label{tab:perturbations}
-\begin{tabular}{llccp{3.5cm}}
+\begin{tabular}{llccL{3.5cm}}
 \toprule
 \textbf{Condition} & \textbf{Transformation} & \textbf{Facts} & \textbf{Wording} & \textbf{Role} \\
 \midrule
@@ -259,23 +253,20 @@ Negation    & Dependency-parse negation   & $\times$     & $\checkmark$ & Simula
 correctness and the expected lower bound for abstention: a well-calibrated model should
 rarely decline to answer when the context is correct and directly relevant.
 
-\paragraph{Paraphrase.} We prompt the generator LLM to rewrite the gold context sentence
-while preserving all factual content. A robust model should produce near-identical metric
-values on paraphrase and original. Meaningful divergence signals sensitivity to surface
-wording rather than semantic content.
+\paragraph{Paraphrase.} A language model rewrites the gold context sentence while
+preserving factual content. A robust model should produce similar values for paraphrase
+and original context. Divergence indicates sensitivity to surface wording rather than
+semantic content.
 
-\paragraph{Entity swap.} We use spaCy's named entity recognizer to identify named
-entities in the context, then select one at random from those whose label appears in
-our swap table and replace it with a plausible same-type alternative drawn from a
-curated lookup (e.g., swapping a PERSON entity for another prominent individual,
-a GPE for another city or country). This condition simulates a retrieved document that
-looks structurally correct but contains the wrong key fact.
+\paragraph{Entity swap.} Named entities in the context are identified, and one entity
+with a supported type is replaced by a plausible alternative of the same type. For
+example, a person is replaced by another person and a location by another location. This
+condition simulates a retrieved document that retains the claim structure but contains a
+wrong key fact.
 
-\paragraph{Negation.} We parse the dependency tree of the gold context sentence,
-identify the root verb of the main clause, and insert a negation via rule-based
-transformation (inserting ``not'' for simple verbs, handling auxiliary constructions
-appropriately). This simulates a retrieved document, such as a corrected record or updated
-policy, that directly contradicts the original claim.
+\paragraph{Negation.} A rule-based transformation negates the central predicate of the
+gold context sentence while preserving the remaining content. This simulates a retrieved
+record or policy that directly contradicts the original claim.
 
 The following worked example shows all four conditions for the same QA pair:
 
@@ -291,14 +282,10 @@ The following worked example shows all four conditions for the same QA pair:
 
 \subsection{Perturbation Quality}
 
-Automatic perturbation pipelines can produce fluency errors or incoherent outputs,
-particularly for negation on complex sentences. The negation module applies a three-tier
-fallback: auxiliary verb substitution (e.g., \textit{was} $\to$ \textit{was not}),
-direct verb negation via lemma insertion (\textit{founded} $\to$ \textit{did not found}),
-and a string-level fallback that inserts ``not'' after the first auxiliary keyword or
-prepends ``It is not true that\ldots'' if none is found. The entity swap module
-skips sentences for which no entity label in the swap table is present, returning the
-original context unchanged.
+Automatic transformations can introduce fluency errors or incoherent outputs, especially
+when negating complex sentences. The negation procedure handles auxiliary and simple-verb
+constructions, with a conservative fallback for other sentences. Entity-swap examples are
+created only when a named-entity type has a plausible replacement.
 
 To validate pipeline quality, two independent annotators rated 80 randomly sampled
 examples (20 per condition) on two dimensions: fluency (1 = grammatically broken,
@@ -306,41 +293,36 @@ examples (20 per condition) on two dimensions: fluency (1 = grammatically broken
 2 = partial success, 3 = clear success). Inter-rater agreement was Cohen's
 $\kappa = 0.396$ for fluency and $\kappa = 0.479$ for correctness. Mean fluency
 across all conditions was 2.725 and mean correctness was 2.475.
-Entity swap failures were concentrated in chemical compound and domain-specific entity
-names not covered by the lookup table; paraphrase failures arose primarily from alteration
-of quoted speech, where the LLM paraphraser did not preserve words inside quotation marks
-verbatim. Negation failures were most common on multi-clause sentences where negating the
-root verb created internal logical contradictions with dependent clauses. These failure
-modes are consistent with known limitations of rule-based perturbation pipelines and are
-reflected in the limitations discussion (\Cref{sec:limitations}).
+Entity-swap errors concentrated in chemical compounds and domain-specific names.
+Paraphrase errors primarily altered quoted speech. Negation errors were most common in
+multi-clause sentences, where negating a central predicate could create a contradiction
+with a dependent clause. \Cref{sec:limitations} discusses the implications of these
+quality limits.
 % ────────────────────────────────────────────────────────────────
 \FloatBarrier
-\section{Evaluation Pipeline}
+\section{Experimental Setup}
 \label{sec:pipeline}
 
 \subsection{Retriever}
 
-For each (QA pair, perturbation type) combination we build a FAISS \texttt{IndexFlatIP}
-index over the single perturbed context string using
-\texttt{sentence-transformers/all-MiniLM-L6-v2} embeddings with normalized
-vectors~\cite{reimers2019sentencebert}, retrieving $k=1$ passage at query time.
-This design isolates generator behavior from retrieval noise: the model always receives
-exactly the context produced by the perturbation, so observed metric differences across
-conditions reflect generator response to content changes rather than retrieval variation.
+For each question-answer pair and context condition, a dense retriever supplies one
+passage ($k=1$), using normalized Sentence-BERT embeddings~\cite{reimers2019sentencebert}.
+The retrieved passage is the corresponding perturbed sentence. Consequently, every model
+receives exactly the intended context, and differences across conditions reflect response
+to content changes rather than variation in candidate retrieval.
 
 \subsection{Generator}
 
-We evaluate six models spanning open-weight and closed-source families. Open-weight models
-are served locally via Ollama for full reproducibility; closed-source models are accessed
-via API at temperature 0 using the same prompt template.
+Six models spanning open-weight and closed-source families are evaluated at temperature
+zero with the same prompt template.
 
 \begin{itemize}[noitemsep]
-  \item \texttt{llama3.2:3b} (3B parameters): smallest open-weight model, serves as baseline
+  \item \texttt{llama3.2:3b} (3B parameters): smallest open-weight model
   \item \texttt{llama3.1:8b} (8B parameters): same family at larger scale
   \item \texttt{mistral:7b}  (7B parameters): different instruction-tuning lineage
   \item \texttt{qwen2.5:7b}  (7B parameters): non-English-centric training corpus
   \item \texttt{gpt-4o-mini}: closed-source, OpenAI instruction-tuning lineage; accessed via OpenAI API
-  \item \texttt{claude-haiku-4-5}: closed-source, Anthropic instruction-tuning lineage; accessed via Anthropic API
+  \item \texttt{claude-haiku-4-5-20251001}: closed-source, Anthropic instruction-tuning lineage
 \end{itemize}
 
 All models are prompted at temperature 0 for reproducibility using a system prompt and
@@ -351,7 +333,7 @@ a structured user message:
 \textbf{System:} You are a precise question-answering assistant. Answer the question
 using ONLY the information provided in the context. If the context does not contain
 enough information to answer the question, respond with exactly: I don't know. Do not
-add information from your own knowledge. Keep your answer concise --- one sentence or
+add information from your own knowledge. Keep your answer concise; one sentence or
 less.\\[6pt]
 \textbf{User:}\\
 \texttt{Context:}\\
@@ -360,9 +342,8 @@ less.\\[6pt]
 \texttt{Answer:}
 \end{examplebox}
 
-\noindent The identical prompt is used for all six models to ensure that observed
-differences in abstention and faithfulness reflect model behavior rather than
-prompt sensitivity.
+\noindent The prompt is identical for all six models, so observed differences in
+abstention and faithfulness cannot be attributed to prompt wording.
 
 \subsection{Metrics}
 
@@ -370,59 +351,97 @@ prompt sensitivity.
 
 \begin{table}[htbp]
 \centering
-\caption{Evaluation metrics, operationalization, and ideal direction on corrupted conditions.}
+\caption{Evaluation metrics and desired direction on corrupted conditions. Formal
+definitions appear below.}
 \label{tab:metrics}
-\begin{tabular}{p{2.8cm}p{4.5cm}p{2cm}p{2cm}}
+\begin{tabular}{L{2.7cm}L{9.5cm}L{1.5cm}}
 \toprule
-\textbf{Metric} & \textbf{Operationalization} & \textbf{Tool} & \textbf{Ideal (corrupted)} \\
+\textbf{Metric} & \textbf{Operationalization} & \textbf{Desired} \\
 \midrule
-Faithfulness       & NLI entailment: $P(\text{answer} \mid \text{context})$ & DeBERTa-v3 NLI & Low \\
-Exact match (EM)   & Normalized string match with gold answer    & String      & Low \\
-Token F1           & Token-level F1 with gold answer             & String      & Low \\
-Hallucination      & NLI contradiction (answer vs.\ context) \textbf{and} token F1 $< 0.2$ \textbf{and} NLI contradiction (generated answer vs.\ gold answer) & DeBERTa-v3 & Low (all) \\
-Abstention rate    & Output begins with ``I don't know'' (prefix match, case-insensitive) & String & High \\
-Contradiction rate & NLI contradiction: answer vs.\ context      & DeBERTa-v3 & Moderate \\
+Faithfulness       & NLI entailment of the answer by retrieved context & Low \\
+Exact match (EM)   & Normalized match with the gold answer           & Low \\
+Token F1           & Token-overlap F1 with the gold answer           & Low \\
+Hallucination      & NLI-contradictory answer with low gold-answer overlap & Low \\
+Abstention rate    & Output starts with ``I don't know''             & High \\
+Contradiction rate & NLI contradiction between answer and retrieved context & High \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The faithfulness score is computed as:
+For example $i$, let $a_i$ denote a generated answer, $c_i$ the retrieved context,
+$g_i$ the gold answer, $E_i$ the NLI entailment probability for $(c_i,a_i)$, and $K_i$
+the NLI contradiction indicator for $(c_i,a_i)$. Let $M_i$ and $F_i$ denote normalized
+exact match and token F1 against $g_i$, respectively. The reported condition-level
+metrics are means over the $n$ examples. Faithfulness is
 \begin{equation}
-  \text{faithfulness}(a, c) = P_\text{NLI}(\text{entailment} \mid \text{premise}=c,\;
-  \text{hypothesis}=a)
+  \operatorname{Faithfulness} = \frac{1}{n}\sum_{i=1}^{n} E_i,
+  \quad E_i = P_\text{NLI}(\text{entailment}\mid c_i,a_i).
+  \label{eq:faithfulness}
 \end{equation}
-where $a$ is the generated answer and $c$ is the perturbed retrieved context, scored by
-\texttt{cross-encoder/nli-\allowbreak deberta-v3-base}.
+The NLI model is \texttt{cross-encoder/nli-deberta-v3-base}. Exact match and token F1 are
+\begin{equation}
+  \operatorname{EM}=\frac{1}{n}\sum_{i=1}^{n}\mathbb{1}[M_i=1],
+  \qquad
+  \operatorname{F1}=\frac{1}{n}\sum_{i=1}^{n}F_i.
+  \label{eq:answer-quality}
+\end{equation}
+An answer is counted as a hallucination only when it contradicts the retrieved context,
+has little overlap with the gold answer, and the answer itself contradicts the gold answer:
+\begin{equation}
+  \operatorname{Hallucination} = \frac{1}{n}\sum_{i=1}^{n}
+  \mathbb{1}[K_i=1\ \land\ F_i<0.2\ \land\ \operatorname{NLIContradict}(g_i,a_i)=1].
+  \label{eq:hallucination}
+\end{equation}
+With $A_i=\mathbb{1}[a_i\text{ begins with ``I don't know''}]$, abstention and
+contradiction are
+\begin{equation}
+  \operatorname{Abstain}=\frac{1}{n}\sum_{i=1}^{n}A_i,
+  \qquad
+  \operatorname{Contradiction}=\frac{1}{n}\sum_{i=1}^{n}K_i.
+  \label{eq:abstention-contradiction}
+\end{equation}
 
-We additionally define an \emph{abstention cliff score} to summarize each model's
-condition-sensitivity in a single value:
+The abstention-cliff score summarizes condition sensitivity:
 \begin{equation}
   \Delta_\text{abstain} = \frac{1}{2}
     \bigl[\text{Abstain}(\text{entity\_swap}) + \text{Abstain}(\text{negation})\bigr]
     - \text{Abstain}(\text{original})
   \label{eq:cliff}
 \end{equation}
-A higher $\Delta_\text{abstain}$ indicates that a model abstains more on corrupted
-conditions relative to clean context — the desired behavior for a well-calibrated RAG
-generator. An ideal model would score near $+0.70$, abstaining on nearly all corrupted
-inputs while committing on nearly all clean ones.
+A higher $\Delta_\text{abstain}$ indicates more abstention on corrupted than clean context.
+An ideal model would have a large positive score by abstaining on corrupted inputs while
+answering clean inputs.
 
-We also report Expected Calibration Error (ECE) to measure global alignment between
-faithfulness and abstention rate across binned faithfulness intervals. ECE complements
-$\Delta_\text{abstain}$: a model can improve ECE by becoming uniformly more cautious
-without improving condition-sensitivity, as we demonstrate in the similarity score
-ablation (\Cref{sec:similarity}).
+The similarity-score ablation also reports an abstention-calibration discrepancy, adapted
+from expected calibration error. Partitioning outputs into ten bins $b$ by $E_i$, with
+$\bar{A}_b$ and $\bar{E}_b$ denoting mean abstention and faithfulness in each bin, yields
+\begin{equation}
+  \operatorname{ECE}_{\mathrm{abstain}} = \sum_b \frac{n_b}{n}
+  \left|\bar{A}_b-(1-\bar{E}_b)\right|.
+  \label{eq:ece}
+\end{equation}
+This descriptive measure is distinct from the standard probability-calibration ECE because
+faithfulness, rather than a predicted probability, defines the target abstention rate.
 
 \subsection{Statistical Testing}
 
-We use the following tests to assess whether differences across conditions are
-statistically reliable:
+All primary comparisons are paired because each question-answer pair appears in every
+condition. For a paired difference $d_i$, the paper reports the mean difference and a
+two-sided 95\% confidence interval,
+\begin{equation}
+  \bar d \pm 1.96\frac{s_d}{\sqrt{n}}.
+  \label{eq:paired-ci}
+\end{equation}
+This interval is used for continuous faithfulness and binary-rate differences at
+$n=1{,}000$. Abstention changes are additionally tested with exact two-sided McNemar
+tests. The 12 pre-specified original-versus-corrupted abstention tests are adjusted with
+the Holm procedure. Paraphrase comparisons are diagnostic and reported with confidence
+intervals rather than used to support the primary claims.
 \begin{itemize}[noitemsep]
-  \item \textbf{Two-proportion $z$-test} for pairwise condition comparisons on
-        proportion-valued metrics (EM, abstention, hallucination, contradiction).
-  \item \textbf{Cohen's $h$} as an effect size measure for proportion comparisons.
-  \item \textbf{Bonferroni correction} for multiple comparisons across conditions and
-        metrics.
+  \item \textbf{Paired mean difference and 95\% confidence interval} for faithfulness,
+        EM, F1, hallucination, and contradiction.
+  \item \textbf{Exact McNemar test} for the primary binary abstention comparisons.
+  \item \textbf{Holm correction} across the 12 primary abstention tests.
 \end{itemize}
 % ────────────────────────────────────────────────────────────────
 \FloatBarrier
@@ -432,15 +451,15 @@ statistically reliable:
 \subsection{Main Results}
 
 \Cref{tab:main-results} presents the full results matrix across all six models and
-conditions ($N=1{,}000$ per cell). Significance markers reflect two-proportion $z$-test
-comparisons against the original condition within each model block.
+conditions ($N=1{,}000$ per cell). \Cref{tab:paired-effects} reports the paired
+confidence intervals and corrected tests for the primary comparisons.
 
 \begin{table}[ht]
 \centering
 \caption{Main results by model and perturbation condition ($N=1{,}000$ per cell).
-  $\dagger$~$p<.05$, $\ddagger$~$p<.01$, $*$~$p<.001$ vs.\ Original (two-proportion
-  $z$-test, Bonferroni-corrected). Arrows indicate desired direction on corrupted
-  conditions.}
+  Values are condition means. Arrows indicate the desired direction on corrupted
+  conditions. A value shown as $<.01$ denotes zero observed events; it does not imply
+  a zero population rate.}
 \label{tab:main-results}
 \small
 \renewcommand{\arraystretch}{1.15}
@@ -457,38 +476,66 @@ comparisons against the original condition within each model block.
 \multirow{4}{*}{\texttt{llama3.2:3b}}
   & Original    & .74        & .20        & .47        & .14        & .04        & .12 \\
   & Paraphrase  & .71        & .13        & .37        & .20        & .05        & .16 \\
-  & Entity swap & .57$^{*}$  & .12$^{*}$  & .32$^{*}$  & .30$^{*}$  & .07$^{\dagger}$ & .25$^{*}$ \\
-  & Negation    & .51$^{*}$  & .15        & .35$^{*}$  & .32$^{*}$  & .04        & .21$^{*}$ \\
+  & Entity swap & .57        & .12        & .32        & .30        & .07        & .25 \\
+  & Negation    & .51        & .15        & .35        & .32        & .04        & .21 \\
 \midrule
 \multirow{4}{*}{\texttt{llama3.1:8b}}
   & Original    & .79        & .25        & .55        & .10        & .03        & .09 \\
   & Paraphrase  & .74        & .15        & .38        & .18        & .04        & .15 \\
-  & Entity swap & .62$^{*}$  & .16$^{*}$  & .38$^{*}$  & .28$^{*}$  & .07$^{\dagger}$ & .23$^{*}$ \\
-  & Negation    & .55$^{*}$  & .20        & .41$^{*}$  & .31$^{*}$  & .04        & .19$^{*}$ \\
+  & Entity swap & .62        & .16        & .38        & .28        & .07        & .23 \\
+  & Negation    & .55        & .20        & .41        & .31        & .04        & .19 \\
 \midrule
 \multirow{4}{*}{\texttt{mistral:7b}}
   & Original    & .67        & .12        & .41        & .13        & .03        & .11 \\
   & Paraphrase  & .63        & .06        & .30        & .15        & .03        & .13 \\
-  & Entity swap & .51$^{*}$  & .07        & .29$^{*}$  & .26$^{*}$  & .07$^{\dagger}$ & .24$^{*}$ \\
-  & Negation    & .40$^{*}$  & .08        & .26$^{*}$  & .43$^{*}$  & .04        & .19$^{*}$ \\
+  & Entity swap & .51        & .07        & .29        & .26        & .07        & .24 \\
+  & Negation    & .40        & .08        & .26        & .43        & .04        & .19 \\
 \midrule
 \multirow{4}{*}{\texttt{qwen2.5:7b}}
   & Original    & .74        & .14        & .41        & .16        & .04        & .12 \\
   & Paraphrase  & .70        & .12        & .35        & .19        & .04        & .14 \\
-  & Entity swap & .53$^{*}$  & .07$^{*}$  & .26$^{*}$  & .37$^{*}$  & .09$^{*}$  & .27$^{*}$ \\
-  & Negation    & .44$^{*}$  & .10        & .27$^{*}$  & .43$^{*}$  & .05        & .24$^{*}$ \\
+  & Entity swap & .53        & .07        & .26        & .37        & .09        & .27 \\
+  & Negation    & .44        & .10        & .27        & .43        & .05        & .24 \\
 \midrule
 \multirow{4}{*}{\texttt{gpt-4o-mini}}
   & Original    & .74        & .13        & .43        & .14        & .03        & .11 \\
   & Paraphrase  & .69        & .08        & .32        & .20        & .05        & .16 \\
-  & Entity swap & .56$^{*}$  & .09        & .30$^{*}$  & .32$^{*}$  & .07$^{\dagger}$ & .26$^{*}$ \\
-  & Negation    & .45$^{*}$  & .09        & .27$^{*}$  & .44$^{*}$  & .05        & .22$^{*}$ \\
+  & Entity swap & .56        & .09        & .30        & .32        & .07        & .26 \\
+  & Negation    & .45        & .09        & .27        & .44        & .05        & .22 \\
 \midrule
 \multirow{4}{*}{\texttt{claude-haiku}}
   & Original    & .72        & .06        & .32        & .16        & .01        & .02 \\
-  & Paraphrase  & .67        & .03        & .23        & .23        & .00        & .03 \\
-  & Entity swap & .54$^{*}$  & .03        & .22$^{*}$  & .35$^{*}$  & .02        & .05$^{*}$ \\
-  & Negation    & .47$^{*}$  & .02        & .22$^{*}$  & .46$^{*}$  & .00        & .11$^{*}$ \\
+  & Paraphrase  & .67        & .03        & .23        & .23        & $<.01$      & .03 \\
+  & Entity swap & .54        & .03        & .22        & .35        & .02        & .05 \\
+  & Negation    & .47        & .02        & .22        & .46        & $<.01$      & .11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Primary paired effects relative to original context ($n=1{,}000$ per row).
+  Faithfulness differences are mean differences with 95\% confidence intervals;
+  abstention differences are percentage points with paired 95\% confidence intervals.
+  All exact McNemar tests remain $q<.0001$ after Holm correction.}
+\label{tab:paired-effects}
+\small
+\begin{tabular}{llcc}
+\toprule
+\textbf{Model} & \textbf{Condition} & $\Delta$ Faithfulness [95\% CI] & $\Delta$ Abstention pp [95\% CI] \\
+\midrule
+\texttt{llama3.2:3b} & Entity swap & $-0.172$ [$-0.198$, $-0.146$] & $+16.4$ [$+14.0$, $+18.8$] \\
+                         & Negation    & $-0.236$ [$-0.265$, $-0.207$] & $+18.3$ [$+15.7$, $+20.9$] \\
+\texttt{llama3.1:8b} & Entity swap & $-0.173$ [$-0.198$, $-0.148$] & $+17.5$ [$+15.1$, $+19.9$] \\
+                         & Negation    & $-0.243$ [$-0.273$, $-0.213$] & $+20.9$ [$+18.2$, $+23.6$] \\
+\texttt{mistral:7b} & Entity swap & $-0.153$ [$-0.179$, $-0.127$] & $+13.4$ [$+11.1$, $+15.7$] \\
+                         & Negation    & $-0.264$ [$-0.294$, $-0.234$] & $+30.9$ [$+28.0$, $+33.8$] \\
+\texttt{qwen2.5:7b} & Entity swap & $-0.205$ [$-0.231$, $-0.178$] & $+20.2$ [$+17.6$, $+22.8$] \\
+                         & Negation    & $-0.292$ [$-0.322$, $-0.263$] & $+26.6$ [$+23.8$, $+29.4$] \\
+\texttt{gpt-4o-mini} & Entity swap & $-0.180$ [$-0.204$, $-0.155$] & $+18.3$ [$+15.8$, $+20.8$] \\
+                         & Negation    & $-0.295$ [$-0.325$, $-0.265$] & $+30.0$ [$+27.1$, $+32.9$] \\
+\texttt{claude-haiku} & Entity swap & $-0.174$ [$-0.199$, $-0.148$] & $+18.6$ [$+16.1$, $+21.1$] \\
+                         & Negation    & $-0.249$ [$-0.279$, $-0.219$] & $+30.2$ [$+27.3$, $+33.1$] \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -496,86 +543,81 @@ comparisons against the original condition within each model block.
 \subsection{RQ1: Do Models Follow Corrupted Context?}
 \label{sec:rq1}
 
-Faithfulness drops significantly from original to corrupted conditions across all six
-models. \texttt{llama3.1:8b} achieves the highest baseline faithfulness (0.79) and drops
-to 0.62 on entity swap ($p < .001$) and 0.55 on negation ($p < .001$).
+Faithfulness decreases from original to corrupted conditions across all six models. The
+paired 95\% confidence intervals in \Cref{tab:paired-effects} exclude zero in every
+primary comparison. \texttt{llama3.1:8b} has the highest baseline faithfulness (0.79)
+and decreases to 0.62 on entity swap and 0.55 on negation.
 \texttt{mistral:7b} starts lower (0.67) and falls most steeply to 0.40 on negation
-($p < .001$), suggesting it is less inclined to follow context under contradiction. Among
+suggesting less tendency to follow context under contradiction. Among
 closed-source models, \texttt{claude-haiku} shows the lowest baseline EM (0.06) and F1
 (0.32) on original context, indicating a more conservative answering style even on clean
 input.
 
-At $N=1{,}000$, paraphrase faithfulness differences reach statistical significance for
-three models (\texttt{llama3.1:8b}: $p=.005$; \texttt{gpt-4o-mini}: $p=.011$;
-\texttt{claude-haiku}: $p=.023$), a pattern not detectable at smaller sample sizes.
-However, effect sizes remain small (faith $\Delta$ range: $-0.034$ to $-0.051$) and fall
-well below the drops observed on entity swap and negation. EM differences are significant
-for most models but similarly modest in magnitude. We interpret these as minor surface-form
-sensitivity rather than substantive faithfulness failures: the paraphrase pipeline
-introduces slight wording differences that affect extractive EM without meaningfully
-changing whether the model follows context. The core finding that entity swap and negation
-produce far larger drops remains robust. Full paraphrase diagnostics are reported in
+Paraphrase effects are smaller than corruption effects but are not negligible. Across
+models, the paired faithfulness change is $-0.034$ to $-0.051$, compared with $-0.153$
+to $-0.295$ for the corrupted conditions. EM also falls by 2.6--9.9 percentage points.
+This control therefore reveals surface-form sensitivity, and it should not be treated as
+an identical-to-original condition. The substantially larger effects of entity swap and
+negation remain the central result. Full diagnostics appear in
 \Cref{tab:paraphrase-diagnostic}.
 
 \begin{table}[htbp]
 \centering
-\caption{Paraphrase diagnostic: faithfulness and EM delta (paraphrase $-$ original).
-  At $N=1{,}000$, faithfulness differences reach significance for some models,
-  indicating modest surface-form sensitivity not detectable at smaller sample sizes.
-  EM differences are significant for most models, driven by the more conservative
-  phrasing style of paraphrased contexts.}
+\caption{Paraphrase diagnostic: paired change relative to original context, with 95\%
+  confidence intervals ($n=1{,}000$ per row). The smaller but consistently negative
+  changes indicate surface-form sensitivity.}
 \label{tab:paraphrase-diagnostic}
 \small
-\begin{tabular}{lcccc}
+\begin{tabular}{lcc}
 \toprule
-\textbf{Model} & \textbf{Faith $\Delta$} & \textbf{$p$} & \textbf{EM $\Delta$} & \textbf{$p$} \\
+\textbf{Model} & \textbf{Faithfulness $\Delta$ [95\% CI]} & \textbf{EM $\Delta$ [95\% CI]} \\
 \midrule
-\texttt{llama3.2:3b}  & $-0.034$ & .080           & $-0.072$ & $<.001$ \\
-\texttt{llama3.1:8b}  & $-0.051$ & $.005^{\dagger}$ & $-0.099$ & $<.001$ \\
-\texttt{mistral:7b}   & $-0.039$ & .055           & $-0.065$ & $<.001$ \\
-\texttt{qwen2.5:7b}   & $-0.035$ & .071           & $-0.026$ & .085    \\
-\texttt{gpt-4o-mini}  & $-0.050$ & $.011^{\dagger}$ & $-0.048$ & $.001^{\dagger}$ \\
-\texttt{claude-haiku} & $-0.045$ & $.023^{\dagger}$ & $-0.026$ & $.005^{\dagger}$ \\
+\texttt{llama3.2:3b}  & $-0.034$ [$-0.057$, $-0.010$] & $-0.072$ [$-0.093$, $-0.051$] \\
+\texttt{llama3.1:8b}  & $-0.051$ [$-0.075$, $-0.027$] & $-0.099$ [$-0.123$, $-0.075$] \\
+\texttt{mistral:7b}   & $-0.039$ [$-0.065$, $-0.014$] & $-0.065$ [$-0.084$, $-0.046$] \\
+\texttt{qwen2.5:7b}   & $-0.035$ [$-0.056$, $-0.015$] & $-0.026$ [$-0.045$, $-0.007$] \\
+\texttt{gpt-4o-mini}  & $-0.050$ [$-0.071$, $-0.028$] & $-0.048$ [$-0.067$, $-0.029$] \\
+\texttt{claude-haiku} & $-0.045$ [$-0.068$, $-0.022$] & $-0.026$ [$-0.038$, $-0.014$] \\
 \bottomrule
-\multicolumn{5}{l}{\small $\dagger$ significant at $p < .05$ after Bonferroni correction}
 \end{tabular}
 \end{table}
 
 \subsection{RQ2: Do Models Hallucinate?}
 \label{sec:rq2}
 
-Hallucination rates remain low across all six models and conditions, ranging from 0\% to
-9\%. Entity swap consistently produces the highest hallucination rates: \texttt{qwen2.5:7b}
-peaks at 9\% on entity swap, and \texttt{llama3.1:8b} and \texttt{mistral:7b} each reach
-7\%. A plausible-but-wrong entity is more likely to elicit confabulation than an explicit
-negation, where the syntactic contradiction is overt. Negation hallucination rates are
-statistically indistinguishable from baseline for most models.
+Hallucination rates are low across all six models and conditions, ranging from no observed
+events to 9\%. Entity swap produces the highest observed rate for every model:
+\texttt{qwen2.5:7b} reaches 9\%, and \texttt{llama3.1:8b} and \texttt{mistral:7b} each
+reach 7\%. A plausible wrong entity may therefore be more likely to elicit confabulation
+than an explicit negation. Zero-event cells should be interpreted cautiously: with
+$n=1{,}000$, the exact one-sided 95\% upper confidence bound for a zero observed rate is
+0.37\%, rather than zero.
 
-Notably, \texttt{claude-haiku} shows near-zero hallucination across all conditions
-(0--2\%), the lowest of any model evaluated. This may reflect more conservative decoding
-behavior or stronger instruction-following that suppresses fabrication even when context
-is corrupted. The primary failure mode under corrupted retrieval remains over-abstention
-rather than confabulation across all six models.
+\texttt{claude-haiku} has the lowest observed hallucination rates, from no observed events
+to 2\%. The data do not establish the cause of this difference. Across all models, the
+larger and more consistent behavioral change is increased abstention rather than
+confabulation.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig1_hallucination_bars.pdf}
 \caption{Hallucination rate by model and perturbation condition across all six models.
-  Entity swap produces the highest hallucination rate consistently;
-  \texttt{claude-haiku} shows near-zero hallucination across all conditions.}
+  Entity swap produces the highest observed hallucination rate consistently;
+  \texttt{claude-haiku} has the lowest observed rates.}
 \label{fig:hallucination}
 \end{figure}
 
 \subsection{RQ3: Is Abstention Calibrated?}
 \label{sec:rq3}
 
-The abstention results are the central finding. A well-calibrated model would show low
-abstention on original and paraphrase conditions and high abstention on corrupted
-conditions. Observed cliffs are real but shallower than ideal across all six models.
+The abstention results are central to the benchmark. A well-calibrated model would show
+low abstention on original and paraphrase conditions and high abstention on corrupted
+conditions. Every primary paired comparison increases abstention, with 95\% confidence
+intervals that exclude zero and Holm-adjusted $q<.0001$.
 
 The Llama family shows the weakest calibration. \texttt{llama3.2:3b} abstains at only
 14\% on correct original context and reaches 30\% on entity swap and 32\% on negation
-($\Delta_\text{abstain} = +0.173$, $p < .001$). \texttt{llama3.1:8b} shows a similarly
+($\Delta_\text{abstain} = +0.173$). \texttt{llama3.1:8b} shows a similarly
 flat response (baseline 10\%, rising to 28\% and 31\% on corrupted conditions,
 $\Delta_\text{abstain} = +0.192$). Both models commit readily on clean context but fail
 to substantially increase abstention under corruption.
@@ -606,58 +648,56 @@ than their open-weight counterparts.
 \subsection{RQ4: Does Scale, Family, or Open- vs.\ Closed-Source Status Predict Calibration?}
 \label{sec:rq4}
 
-\Cref{tab:cliff-scores} reports cliff scores, effect sizes, and significance for all six
-models (see \Cref{eq:cliff} for the $\Delta_\text{abstain}$ definition).
+\Cref{tab:cliff-scores} reports cliff scores for all six models (see \Cref{eq:cliff} for
+the $\Delta_\text{abstain}$ definition).
 
 \begin{table}[htbp]
 \centering
-\caption{Abstention cliff scores by model, sorted by $\Delta_\text{abstain}$.
-  All cliffs significant at $p < .0001$; Cohen's $h$ computed via two-proportion
-  $z$-test at $N=1{,}000$.}
+\caption{Abstention-cliff scores by model, sorted by $\Delta_\text{abstain}$.
+  The score is descriptive; paired condition-level effects and confidence intervals are
+  reported in \Cref{tab:paired-effects}.}
 \label{tab:cliff-scores}
-\begin{tabular}{llcccc}
+\begin{tabular}{llc}
 \toprule
-\textbf{Model} & \textbf{Type} & $\Delta_\text{abstain}$ & \textbf{Cohen's $h$} & \textbf{$p$-value} & \textbf{Sig.} \\
+\textbf{Model} & \textbf{Type} & $\Delta_\text{abstain}$ \\
 \midrule
-\texttt{llama3.2:3b}  & Open-weight   & $+0.173$ & 0.423 & $<.0001$ & $*$ \\
-\texttt{llama3.1:8b}  & Open-weight   & $+0.192$ & 0.495 & $<.0001$ & $*$ \\
-\texttt{mistral:7b}   & Open-weight   & $+0.222$ & 0.535 & $<.0001$ & $*$ \\
-\texttt{qwen2.5:7b}   & Open-weight   & $+0.234$ & 0.531 & $<.0001$ & $*$ \\
-\texttt{gpt-4o-mini}  & Closed-source & $+0.241$ & 0.566 & $<.0001$ & $*$ \\
-\texttt{claude-haiku} & Closed-source & $+0.244$ & 0.554 & $<.0001$ & $*$ \\
+\texttt{llama3.2:3b}  & Open-weight   & $+0.173$ \\
+\texttt{llama3.1:8b}  & Open-weight   & $+0.192$ \\
+\texttt{mistral:7b}   & Open-weight   & $+0.222$ \\
+\texttt{qwen2.5:7b}   & Open-weight   & $+0.234$ \\
+\texttt{gpt-4o-mini}  & Closed-source & $+0.241$ \\
+\texttt{claude-haiku} & Closed-source & $+0.244$ \\
 \bottomrule
-\multicolumn{6}{l}{\small $*$\,$p<.001$}
 \end{tabular}
 \end{table}
 
-Three findings emerge from this ranking. First, scale alone does not predict calibration:
+Three observations emerge from this ranking. First, parameter count does not order
+calibration within this evaluated set:
 \texttt{llama3.1:8b} (8B parameters) scores lower than all three 7B competitors. Second,
 model family matters: the two Llama models cluster at the bottom regardless of size, while
-Mistral and Qwen outperform them at the same parameter count. Third, and most strikingly,
-closed-source models occupy the top two positions. Both \texttt{gpt-4o-mini} and
+Mistral and Qwen score higher at a similar parameter count. Third, the two closed-source
+models occupy the top positions. Both \texttt{gpt-4o-mini} and
 \texttt{claude-haiku} outperform all four open-weight models on $\Delta_\text{abstain}$
-despite the open-weight models spanning a comparable parameter range. This suggests that
-instruction-tuning methodology or RLHF signal --- factors that differ systematically
-between open-weight and closed-source development pipelines --- contributes to abstention
-calibration in ways that parameter count does not capture.
+despite the open-weight models spanning a comparable parameter range. This ranking is
+compatible with a role for model-family differences, but it does not identify a causal
+mechanism or establish a general open-versus-closed advantage.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig3_cliff_scores.pdf}
 \caption{Abstention cliff score $\Delta_\text{abstain}$ by model. Closed-source models
-  (\texttt{gpt-4o-mini}, \texttt{claude-haiku}) achieve the strongest calibration;
-  \texttt{llama3.2:3b} the weakest. Dashed line marks approximate ideal cliff
-  ($\approx 0.70$).}
+  (\texttt{gpt-4o-mini}, \texttt{claude-haiku}) have the largest observed scores;
+  \texttt{llama3.2:3b} has the smallest. Higher scores indicate more selective
+  abstention across the evaluated conditions.}
 \label{fig:cliff}
 \end{figure}
 
 \subsection{Retrieval Similarity Score as a Calibration Intervention}
 \label{sec:similarity}
 
-The results above raise a practical question: can a simple prompt-level intervention
-improve abstention calibration without fine-tuning? We test this by supplying the FAISS
-retrieval similarity score as a prefix to the context field, allowing the model to
-condition its confidence explicitly on retrieval quality:
+The results motivate an exploratory prompt-level intervention. The retriever similarity
+score is supplied as a prefix to the context field, allowing the model to condition its
+response on a retrieval-quality signal:
 
 \begin{examplebox}
 \small
@@ -666,36 +706,36 @@ condition its confidence explicitly on retrieval quality:
 \texttt{[1] \{retrieved\_context\}}
 \end{examplebox}
 
-We run this intervention on \texttt{llama3.2:3b} over a 200-example subset (800 total
-inferences). Results are summarized in \Cref{tab:similarity-ablation}.
+The intervention is evaluated on \texttt{llama3.2:3b} over a matched 200-example subset
+(800 model-condition inputs). Results are summarized in \Cref{tab:similarity-ablation}.
 
 \begin{table}[htbp]
 \centering
-\caption{Similarity score intervention ablation on \texttt{llama3.2:3b} ($n=200$
-  examples). ECE computed over faithfulness bins; $\Delta_\text{abstain}$ as defined
-  in \Cref{eq:cliff}.}
+\caption{Matched similarity-score ablation on \texttt{llama3.2:3b} ($n=200$
+  question-answer pairs; 800 model-condition inputs). $\operatorname{ECE}_{\mathrm{abstain}}$
+  is defined in \Cref{eq:ece}; $\Delta_\text{abstain}$ is defined in \Cref{eq:cliff}.
+  This single-model result is descriptive.}
 \label{tab:similarity-ablation}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Condition} & \textbf{ECE} & $\Delta_\text{abstain}$ & \textbf{Orig.\ Abstain} \\
 \midrule
-Baseline (no similarity) & 0.1280 & $+0.173$ & 0.138 \\
+Baseline (no similarity) & 0.1080 & $+0.165$ & 0.145 \\
 With similarity score    & 0.0516 & $+0.135$ & 0.230 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The similarity score intervention reduces ECE by 60\% (0.1280 $\to$ 0.0516), a
-substantial improvement in global calibration. However, $\Delta_\text{abstain}$ decreases
-from $+0.173$ to $+0.135$. The intervention raises baseline abstention on clean original
-context (13.8\% $\to$ 23.0\%) almost as much as it raises abstention on corrupted
-conditions, making the model more uniformly cautious rather than more condition-sensitive.
+On the matched subset, the similarity prefix lowers the descriptive
+$\operatorname{ECE}_{\mathrm{abstain}}$ by 52\% (0.1080 $\to$ 0.0516). However,
+$\Delta_\text{abstain}$ decreases from $+0.165$ to $+0.135$. The prefix raises abstention
+on clean original context from 14.5\% to 23.0\%, almost as much as it raises abstention on
+corrupted conditions. It therefore makes the model more uniformly cautious rather than
+more condition-sensitive.
 
-This dissociation reveals that global calibration (ECE) and selective calibration
-($\Delta_\text{abstain}$) are distinct failure modes. A retrieval confidence signal helps
-the model recognize uncertainty in aggregate but does not teach it to discriminate between
-clean and corrupted context specifically. Contrastive fine-tuning on paired
-clean/corrupted examples remains the more promising path to condition-sensitive abstention.
+This single-model ablation suggests that the descriptive global discrepancy and selective
+calibration can move in different directions. Replication across models and a larger sample
+is needed before drawing a broader conclusion.
 % ────────────────────────────────────────────────────────────────
 \FloatBarrier
 \section{Analysis}
@@ -703,24 +743,22 @@ clean/corrupted examples remains the more promising path to condition-sensitive 
 
 \subsection{Failure Mode Taxonomy}
 
-Drawing on the joint distribution of faithfulness, EM, hallucination, and abstention, we
-identify three generator archetypes:
+The joint distribution of faithfulness, EM, hallucination, and abstention motivates three
+descriptive generator archetypes:
 
 \begin{itemize}
   \item \textbf{Context-follower.} High faithfulness on corrupted conditions, low EM. The
     model accepts the retrieved context even when it is wrong and produces answers
     consistent with the incorrect passage. Errors of this type are difficult to detect in
-    production because the outputs are coherent and internally consistent. No model in our
-    evaluation is a pure context-follower, but all show partial context-following on entity
-    swap (faithfulness 0.51--0.62 on corrupted conditions across open-weight models).
+    production because the outputs are coherent and internally consistent. No evaluated
+    model is a pure context-follower, but all show partial context-following on entity
+    swap (faithfulness 0.51--0.62 across open-weight models).
 
   \item \textbf{Hallucinator.} Low faithfulness, low EM, elevated hallucination rate. The
     model disregards the retrieved context and produces a plausible-sounding answer from
-    parametric memory. This archetype is mostly absent from our results: hallucination
-    peaks at 9\% and is rarely significant, indicating these models do not systematically
-    fabricate answers under retrieval pressure. \texttt{claude-haiku} shows the strongest
-    resistance to this failure mode, with hallucination rates of 0--2\% across all
-    conditions.
+    parametric memory. This behavior is uncommon in the observed data: hallucination
+    peaks at 9\%. \texttt{claude-haiku} has the lowest observed rate, from no observed
+    events to 2\% across conditions.
 
   \item \textbf{Over-abstainer.} High uniform abstention regardless of context quality.
     The model declines to answer at similar rates on clean and corrupted context alike.
@@ -731,10 +769,9 @@ identify three generator archetypes:
 \end{itemize}
 
 An ideal model would commit on clean context and abstain on corrupted context, producing a
-cliff score near $+0.70$ or higher. All six models fall short, with scores ranging from
-$+0.173$ to $+0.244$. Closed-source models approach the upper bound of this range but
-remain far from ideal, indicating that the over-abstainer failure mode is systemic across
-current LLM families rather than specific to open-weight models.
+large positive cliff score. The observed scores range from $+0.173$ to $+0.244$. All six
+models therefore show room for more selective abstention, but this sample does not support
+a claim about all current LLM families.
 
 \begin{figure}[htbp]
 \centering
@@ -742,7 +779,7 @@ current LLM families rather than specific to open-weight models.
 \caption{Failure mode taxonomy. Each point is a (model, condition) pair plotted by
   faithfulness rate ($x$) and abstention rate ($y$) across all six models. Shaded
   regions mark the three archetypes. Corrupted conditions (entity swap, negation) move
-  left and up relative to original/paraphrase, but most remain in the over-abstainer
+  left and up relative to original/paraphrase, but many remain in the over-abstainer
   region rather than the ideal (low faithfulness, high abstention) region.}
 \label{fig:taxonomy}
 \end{figure}
@@ -753,16 +790,13 @@ current LLM families rather than specific to open-weight models.
 \texttt{mistral:7b} shows an asymmetric response across corruption types. It abstains at
 only 26\% on entity swap (barely above its 13\% baseline) but rises to 43\% on negation,
 a 30 percentage-point increase. Mistral is particularly sensitive to explicit logical
-contradiction but does not reliably detect entity-level substitutions. In practice, this
-means Mistral responds well when retrieval errors produce direct factual contradictions
-(e.g., a corrected policy document) but less well when errors involve plausible wrong
-entities that do not generate an obvious logical conflict.
+contradiction but is less responsive to entity-level substitutions. Direct factual
+contradictions therefore produce a larger abstention change than plausible wrong entities
+in this model.
 
 \texttt{qwen2.5:7b} shows a more balanced response: 37\% on entity swap and 43\% on
-negation, both significant at $p < .001$. More uniform detection across failure modes
-makes Qwen the most robustly calibrated open-weight model in our evaluation, though both
-closed-source models achieve higher overall cliff scores with similarly balanced
-entity-swap and negation detection.
+negation. Its observed cliff score is the largest among the four open-weight models,
+although both closed-source models have higher scores in this six-model comparison.
 
 \subsection{Answer-Type Cross-Tabulation}
 \label{sec:crosstab}
@@ -776,11 +810,10 @@ in parametric memory: when a retrieved org name is wrong, models are more likely
 substitute a known alternative from training data rather than abstaining or following the
 corrupted context.
 
-Location-type answers show the lowest abstention rates on entity swap despite
-corruption — models are more likely to accept and echo a plausible wrong location than to
-abstain. A wrong city or country name is structurally indistinguishable from a correct one
-without world knowledge, making location swaps the hardest failure mode for models to
-detect from context alone.
+Location-type answers show the lowest abstention rates on entity swap despite corruption.
+Models therefore more often accept and echo a plausible wrong location than abstain. A
+wrong city or country name is structurally indistinguishable from a correct one without
+world knowledge, which may make location swaps difficult to detect from context alone.
 
 Date and number answers show the highest context-following rates on negation. When a
 negated sentence still contains a specific number (e.g., ``did not send 126 guns''), models
@@ -790,43 +823,24 @@ presence of a numeric anchor overrides sensitivity to the negation operator.
 
 \subsection{Paraphrase as a Diagnostic}
 
-The paraphrase diagnostic results at $N=1{,}000$ reveal a more nuanced picture than the
-original $N=150$ analysis. Faithfulness differences between paraphrase and original reach
-significance for three models (\texttt{llama3.1:8b}, \texttt{gpt-4o-mini},
-\texttt{claude-haiku}), while EM differences are significant for most models. However,
-effect sizes remain small across all six models (faith $\Delta$ range: $-0.034$ to
-$-0.051$), well below the drops observed under entity swap and negation. These small but
-detectable differences at larger sample sizes suggest that the paraphrase pipeline
-introduces minor surface-form sensitivity — primarily through conservative phrasing that
-slightly reduces extractive EM — without meaningfully undermining the core experimental
-design. The semantic corruption signal from entity swap and negation remains clearly
-distinguishable from paraphrase-level noise.
+The paraphrase diagnostic confirms that surface wording affects outputs. The faithfulness
+change ranges from $-0.034$ to $-0.051$ across models, and the EM change ranges from
+$-0.026$ to $-0.099$. These values are smaller than those for entity swap and negation,
+but they show that paraphrase is a control with measurable variation rather than a
+perfectly invariant condition.
 
 \subsection{Error Analysis}
 
-We examine entity swap and negation failures systematically across all six models at
-$N=1{,}000$ (see \Cref{app:error-analysis} for full category counts). Errors fall into
+Entity-swap and negation failures are examined across all six models at $N=1{,}000$ (see
+\Cref{app:error-analysis} for full category counts). Errors fall into
 three categories: (a) the model answered correctly from parametric memory despite
 corrupted context, (b) the model accepted the corrupted context and produced a wrong
 answer, or (c) the model abstained.
 
 \paragraph{Category (a): Correct answer despite corrupted context.}
-The model ignores the wrong context and draws on parametric memory.
-
-\begin{examplebox}
-\small
-\textbf{Category (a) --- Parametric memory overrides corrupted context}\\[4pt]
-\textbf{Question:} In what year was the Theodore M.\ Hesburgh Library at Notre Dame
-finished?\\[3pt]
-\textbf{Perturbed context (negation):} Hesburgh Library, completed in 1963, which is not
-the third building to house the main collection of books.\\[3pt]
-\textbf{Model output (\texttt{qwen2.5:7b}):} 1963\\[3pt]
-\textbf{Faithfulness:} 0.02 \quad \textbf{EM:} \textit{true} \quad
-\textbf{Perturbation:} negation\\[2pt]
-\textit{The model correctly identifies 1963 despite the negated context, relying on
-parametric knowledge. This is technically correct behavior but highlights that models
-may appear calibrated when parametric memory compensates for retrieval failure.}
-\end{examplebox}
+The model outputs the gold answer even though the corrupted context does not support it.
+This category can reflect parametric memory or an incomplete perturbation and therefore
+is not treated as direct evidence of calibrated behavior.
 
 \paragraph{Category (b): Followed corrupted context.}
 The model produces an answer entailed by the wrong context and therefore incorrect. This
@@ -835,14 +849,14 @@ errors difficult to detect downstream.
 
 \begin{examplebox}
 \small
-\textbf{Category (b) --- Context-follower on entity swap}\\[4pt]
+\textbf{Category (b): Context-follower on entity swap}\\[4pt]
 \textbf{Question:} What threat does the Global Adaptation Index study?\\[3pt]
 \textbf{Perturbed context (entity swap):} As of 2013, the university is home to the Notre
 Dame Global Adaptation Index which ranks countries 2010 based on how vulnerable they are
 to climate change and how prepared they are to adapt.\\[3pt]
 \textbf{Model output (\texttt{qwen2.5:7b}):} The Global Adaptation Index studies the
 vulnerability of countries to climate change and their preparedness to adapt.\\[3pt]
-\textbf{Faithfulness:} 1.00 \quad \textbf{EM:} \textit{false} \quad
+\textbf{Faithfulness:} 0.99 \quad \textbf{EM:} \textit{false} \quad
 \textbf{Perturbation:} entity swap\\[2pt]
 \textit{The swapped entity left the claim structure intact; the model faithfully echoed
 the corrupted context without detecting the substitution.}
@@ -852,7 +866,7 @@ the corrupted context without detecting the substitution.}
 
 \begin{examplebox}
 \small
-\textbf{Category (c) --- Correct abstention on negation}\\[4pt]
+\textbf{Category (c): Correct abstention on negation}\\[4pt]
 \textbf{Question:} In what year did Jerome Green send his first wireless message?\\[3pt]
 \textbf{Perturbed context (negation):} Around 1899, Professor Jerome Green did not become
 the first American to send a wireless message.\\[3pt]
@@ -868,63 +882,31 @@ declined to commit to an answer.}
 \label{sec:discussion}
 
 \paragraph{Over-abstention as miscalibration.}
-All six models abstain at non-trivial rates on clean original context (10--16\%), though
-notably lower than the 23--29\% observed in our initial 150-example pilot. This reduction
-at larger sample size suggests the pilot may have overestimated baseline abstention, and
-that models are somewhat more willing to commit on clean context than initially measured.
-Nevertheless, abstaining on 10--16\% of correctly-retrieved questions is not appropriate
-caution — it indicates that models treat abstention as a general-purpose response to
-uncertainty rather than a targeted response to retrieval failure. In production RAG
-deployments, declining to answer one in ten questions with correct context imposes real
-costs on user experience and operator trust. Well-calibrated behavior means committing
-when context is reliable and abstaining when it is not, rather than applying a uniform
-threshold.
+All six models abstain at non-trivial rates on clean original context (10--16\%). Given
+the prompt's instruction to abstain only when context is insufficient, these responses
+represent lost coverage on answerable inputs. Well-calibrated behavior requires low clean
+context abstention together with higher abstention on corrupted context, rather than a
+uniformly cautious response.
 
 \paragraph{Closed-source models show stronger calibration, but the gap is narrow.}
-The most striking finding in the expanded evaluation is that both closed-source models
-(\texttt{gpt-4o-mini}, \texttt{claude-haiku}) outperform all four open-weight models on
-$\Delta_\text{abstain}$, occupying the top two positions in the ranking. However, the
-margin is narrow: closed-source models score $+0.241$--$+0.244$ against open-weight scores
-of $+0.173$--$+0.234$. The gap between the best open-weight model (\texttt{qwen2.5:7b},
-$+0.234$) and the best closed-source model (\texttt{claude-haiku}, $+0.244$) is smaller
-than the gap between the two Llama models ($+0.173$ vs.\ $+0.192$). This suggests that
-the closed-source advantage in abstention calibration is real but not large, and that
-model family and instruction-tuning methodology are more decisive than the open/closed
-distinction per se.
+The two closed-source models have the highest observed cliff scores, 0.241 and 0.244,
+while open-weight scores range from 0.173 to 0.234. The margin is narrow: the difference
+between the best open-weight and best closed-source model is 0.010. This six-model sample
+does not establish a general closed-source advantage.
 
 \paragraph{Model family over scale.}
-\texttt{llama3.1:8b} (8B parameters) does not outperform its 7B competitors on
-calibration despite achieving the highest baseline faithfulness (0.79). Parameter count
-is a weak predictor of abstention calibration. The Llama family clusters at the bottom
-of the cliff score ranking regardless of size, while Mistral and Qwen outperform them at
-the same parameter count. Instruction-tuning methodology and training data composition
-are more plausible explanatory factors: \texttt{qwen2.5:7b}, which uses a multilingual
-and instruction-diverse training corpus, achieves the most balanced open-weight response
-across entity swap and negation conditions.
+\texttt{llama3.1:8b} (8B parameters) does not exceed its 7B competitors on the
+abstention cliff despite achieving the highest baseline faithfulness (0.79).
+Within this small model set, parameter count alone does not order abstention calibration.
+The data are insufficient to identify whether model family, training data, alignment
+method, or another design choice accounts for the ranking.
 
 \paragraph{Implications for RAG system design.}
-Model selection for RAG deployments should include $\Delta_\text{abstain}$ as a criterion
-alongside standard accuracy metrics. Among open-weight models, \texttt{qwen2.5:7b} offers
-the best combination of competitive baseline accuracy and symmetric calibration across
-failure modes. Among all models tested, \texttt{claude-haiku} achieves the highest cliff
-score and near-zero hallucination, making it the strongest option where API access is
-acceptable. The similarity score ablation (\Cref{sec:similarity}) shows that supplying
-the retriever's FAISS similarity score as a prompt prefix improves global calibration
-(ECE $-60\%$) but does not improve selective abstention, distinguishing two failure modes
-that require different remediation strategies: global miscalibration can be partially
-addressed through prompt engineering, while condition-sensitive miscalibration likely
-requires targeted fine-tuning.
-
-\paragraph{Relationship to instruction tuning and RLHF.}
-Abstention behavior is likely downstream of instruction tuning and reinforcement learning
-from human feedback. Models trained to be uniformly cautious may over-abstain because the
-training signal does not distinguish between low-quality and high-quality retrieved
-context. The closed-source advantage in cliff scores is consistent with this hypothesis:
-proprietary RLHF pipelines may include more nuanced feedback signals that reward
-condition-sensitive abstention rather than uniform caution. Fine-tuning on contrastive
-abstention examples --- correct abstentions on corrupted context paired with correct
-commitments on clean context --- is a promising direction for improving calibration in
-open-weight models without sacrificing accuracy on answerable questions.
+Model selection for RAG should assess clean-context coverage and response to corrupted
+context together. The abstention cliff complements standard answer-quality metrics because
+it captures their difference across retrieval conditions. The similarity-score result in
+\Cref{sec:similarity} further shows that a lower descriptive calibration discrepancy does
+not necessarily imply improved selective abstention.
 % ────────────────────────────────────────────────────────────────
 \FloatBarrier
 \section{Limitations}
@@ -952,8 +934,8 @@ open-weight models without sacrificing accuracy on answerable questions.
     known failure mode of instruction-tuned paraphrasers and is reflected in the
     human validation correctness scores.
 
-  \item \textbf{Closed-source model opacity.} We evaluate \texttt{gpt-4o-mini} and
-    \texttt{claude-haiku} via API but have no access to their training data, instruction-tuning
+  \item \textbf{Closed-source model opacity.} \texttt{gpt-4o-mini} and
+    \texttt{claude-haiku} are accessed through provider interfaces, so their training data, instruction-tuning
     methodology, or RLHF signal. The closed-source advantage in abstention calibration is
     an empirical observation; causal attribution to specific training factors is not
     possible without access to model internals.
@@ -983,34 +965,25 @@ open-weight models without sacrificing accuracy on answerable questions.
 \section{Conclusion}
 \label{sec:conclusion}
 
-We introduced a counterfactual perturbation benchmark for measuring how RAG pipeline
-generators respond to controlled retrieval failure. By holding retrieval architecture
-constant and varying only context content across four conditions (original, paraphrase,
-entity swap, and negation), we isolate generator behavior from retrieval quality and
-measure graceful degradation directly across six models spanning open-weight and
-closed-source families at $N=1{,}000$ examples.
+This paper presents a counterfactual benchmark for measuring how RAG generators respond
+to controlled retrieval failure. By holding the question, answer, and prompt fixed while
+varying context content across original, paraphrase, entity-swap, and negation conditions,
+the design isolates generator response to retrieval content across six models and 1{,}000
+paired examples.
 
-Faithfulness drops significantly on corrupted conditions ($p < .001$ in all cases) and
-abstention rises with medium-to-large effect sizes ($h = 0.42$--$0.57$). Hallucination
-rates remain low (0--9\%), identifying over-abstention rather than confabulation as the
-primary failure mode across all six models. Closed-source models
-(\texttt{gpt-4o-mini}, \texttt{claude-haiku}) achieve the strongest abstention cliffs
-($\Delta_\text{abstain} = +0.241$--$+0.244$), while the Llama family shows the flattest,
-least condition-sensitive responses ($\Delta_\text{abstain} = +0.173$--$+0.192$). Scale
-does not reliably predict calibration: \texttt{llama3.1:8b} (8B parameters) scores lower
-than all three 7B competitors on $\Delta_\text{abstain}$. A retrieval similarity score
-intervention reduces global calibration error (ECE) by 60\% but does not improve
-selective abstention, revealing that global and condition-sensitive calibration are
-distinct failure modes requiring different remediation strategies. Human validation of 80
-perturbation examples confirms pipeline quality and characterizes systematic failure modes
-in entity swap and negation generation.
+Faithfulness decreases by 0.153--0.295 on corrupted contexts, and abstention increases by
+13.4--30.9 percentage points; every primary paired 95\% confidence interval excludes
+zero. Hallucination is less frequent, with observed rates from no events to 9\%.
+The two closed-source models have the largest observed abstention cliffs, while the Llama
+models have the smallest. The matched similarity-score ablation reduces a descriptive
+calibration discrepancy but also reduces the selective-abstention score. These findings
+identify selective abstention as a measurable weakness under controlled retrieval failure.
 
-We release the benchmark code, dataset, and evaluation scripts as an open-source toolkit
-with full evaluation scripts. Future directions include extending to additional QA datasets
-(TriviaQA, HotpotQA), evaluating larger closed-source models (GPT-4o, Claude Sonnet),
-exploring contrastive fine-tuning for improved condition-sensitive abstention, and
-conducting multi-model similarity score ablations to determine whether the global
-vs.\ selective calibration dissociation generalizes across model families.
+\paragraph{Future work.}
+Future evaluation should test additional QA datasets, multilingual contexts, more model
+families, and larger matched similarity-score studies. Controlled training interventions
+for selective abstention also require direct evaluation before claims about their efficacy
+are warranted.
 
 % ────────────────────────────────────────────────────────────────
 \begingroup
@@ -1023,17 +996,20 @@ Naman Goyal, Heinrich K\"{u}ttler, Mike Lewis, Wen-tau Yih, Tim Rockt\"{a}schel,
 Sebastian Riedel, and Douwe Kiela. 2020.
 \newblock Retrieval-augmented generation for knowledge-intensive NLP tasks.
 \newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}.
+\newblock \href{https://arxiv.org/abs/2005.11401}{Link}.
 
 \bibitem{es2023ragas}
 Shahul Es, Jithin James, Luis Espinosa Anke, and Steven Schockaert. 2023.
 \newblock RAGAS: Automated evaluation of retrieval augmented generation.
 \newblock \emph{arXiv preprint arXiv:2309.15217}.
+\newblock \href{https://arxiv.org/abs/2309.15217}{Link}.
 
 \bibitem{saadfalcon2023ares}
 Jon Saad-Falcon, Omar Khattab, Christopher Potts, and Matei Zaharia. 2023.
 \newblock ARES: An automated evaluation framework for retrieval-augmented generation
 systems.
 \newblock \emph{arXiv preprint arXiv:2311.09476}.
+\newblock \href{https://arxiv.org/abs/2311.09476}{Link}.
 
 \bibitem{trec2024rag}
 Ronak Pradeep, Nandan Thakur, Sahel Sharifymoghaddam, Eric Zhang, Ryan Nguyen,
@@ -1041,77 +1017,91 @@ Daniel Campos, Nick Craswell, and Jimmy Lin. 2024.
 \newblock Initial nugget evaluation results for the TREC 2024 RAG Track with the
 Automatic Nuggetizer.
 \newblock \emph{arXiv preprint arXiv:2410.01282}.
+\newblock \href{https://arxiv.org/abs/2410.01282}{Link}.
 
 \bibitem{jia2017adversarial}
 Robin Jia and Percy Liang. 2017.
 \newblock Adversarial examples for evaluating reading comprehension systems.
 \newblock In \emph{Proceedings of EMNLP}.
+\newblock \href{https://aclanthology.org/D17-1215/}{Link}.
 
 \bibitem{gardner2020contrast}
 Matt Gardner, Yoav Artzi, Victoria Basmova, Jonathan Berant, Ben Bogin, Sihao Chen,
 Pradeep Dasigi, Dheeru Dua, Yanai Elazar, Ananth Gottumukkala, et al. 2020.
 \newblock Evaluating NLP models via contrast sets.
 \newblock \emph{arXiv preprint arXiv:2004.02709}.
+\newblock \href{https://arxiv.org/abs/2004.02709}{Link}.
 
 \bibitem{kaushik2020counterfactual}
 Divyansh Kaushik, Eduard Hovy, and Zachary Lipton. 2020.
 \newblock Learning the difference that makes a difference with
 counterfactually-augmented data.
 \newblock In \emph{Proceedings of ICLR}.
+\newblock \href{https://arxiv.org/abs/1909.12434}{Link}.
 
 \bibitem{lin2022truthfulqa}
 Stephanie Lin, Jacob Hilton, and Owain Evans. 2022.
 \newblock TruthfulQA: Measuring how models mimic human falsehoods.
 \newblock In \emph{Proceedings of ACL}.
+\newblock \href{https://aclanthology.org/2022.acl-long.229/}{Link}.
 
 \bibitem{kadavath2022language}
 Saurav Kadavath, Tom Conerly, Amanda Askell, Tom Henighan, Dawn Drain, Ethan Perez,
 Nicholas Schiefer, Zac Hatfield-Dodds, Nova DasSarma, Eli Tran-Johnson, et al. 2022.
 \newblock Language models (mostly) know what they know.
 \newblock \emph{arXiv preprint arXiv:2207.05221}.
+\newblock \href{https://arxiv.org/abs/2207.05221}{Link}.
 
 \bibitem{xiong2024can}
 Miao Xiong, Zhiyuan Hu, Xinyang Lu, Yifei Li, Jie Fu, Junxian He, and Bryan Hooi. 2024.
 \newblock Can LLMs express their uncertainty? An empirical evaluation of confidence
 elicitation in LLMs.
 \newblock In \emph{Proceedings of ICLR}.
+\newblock \href{https://arxiv.org/abs/2306.13063}{Link}.
 
 \bibitem{geifman2017selective}
 Yonatan Geifman and Ran El-Yaniv. 2017.
-\newblock Selective prediction in deep neural networks.
+\newblock Selective classification for deep neural networks.
 \newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}.
+\newblock \href{https://arxiv.org/abs/1705.08500}{Link}.
 
 \bibitem{shi2023large}
 Freda Shi, Xinyun Chen, Kanishka Misra, Nathan Scales, David Dohan, Ed Chi,
 Nathanael Sch\"{a}rli, and Denny Zhou. 2023.
 \newblock Large language models can be easily distracted by irrelevant context.
 \newblock In \emph{Proceedings of ICML}.
+\newblock \href{https://proceedings.mlr.press/v202/shi23a.html}{Link}.
 
 \bibitem{ribeiro2020checklist}
 Marco Tulio Ribeiro, Tongshuang Wu, Carlos Guestrin, and Sameer Singh. 2020.
 \newblock Beyond accuracy: Behavioral testing of NLP models with CheckList.
 \newblock In \emph{Proceedings of ACL}.
+\newblock \href{https://aclanthology.org/2020.acl-main.442/}{Link}.
 
 \bibitem{nie2020anli}
 Yixin Nie, Adina Williams, Emily Dinan, Mohit Bansal, Jason Weston, and Douwe Kiela. 2020.
 \newblock Adversarial NLI: A new benchmark for natural language understanding.
 \newblock In \emph{Proceedings of ACL}.
+\newblock \href{https://aclanthology.org/2020.acl-main.441/}{Link}.
 
 \bibitem{reimers2019sentencebert}
 Nils Reimers and Iryna Gurevych. 2019.
 \newblock Sentence-BERT: Sentence embeddings using Siamese BERT-networks.
 \newblock In \emph{Proceedings of EMNLP}.
+\newblock \href{https://aclanthology.org/D19-1410/}{Link}.
 
 \bibitem{rajpurkar2016squad}
 Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. 2016.
 \newblock SQuAD: 100,000+ questions for machine comprehension of text.
 \newblock In \emph{Proceedings of EMNLP}.
+\newblock \href{https://aclanthology.org/D16-1264/}{Link}.
 
 \bibitem{joshi2017triviaqa}
 Mandar Joshi, Eunsol Choi, Daniel Weld, and Luke Zettlemoyer. 2017.
 \newblock TriviaQA: A large scale distantly supervised challenge dataset for reading
 comprehension.
 \newblock In \emph{Proceedings of ACL}.
+\newblock \href{https://aclanthology.org/P17-1147/}{Link}.
 
 \end{thebibliography}
 \endgroup
@@ -1127,7 +1117,7 @@ comprehension.
 \textbf{System:} You are a precise question-answering assistant. Answer the question
 using ONLY the information provided in the context. If the context does not contain
 enough information to answer the question, respond with exactly: I don't know. Do not
-add information from your own knowledge. Keep your answer concise --- one sentence or
+add information from your own knowledge. Keep your answer concise; one sentence or
 less.\\[6pt]
 \textbf{User:}\\
 \texttt{Context:}\\
@@ -1140,7 +1130,7 @@ less.\\[6pt]
 \begin{examplebox}
 \small
 \textbf{System:} You are a precise paraphrasing assistant. Rewrite the given sentence
-using different wording, but preserve every factual detail exactly --- names, dates,
+using different wording, but preserve every factual detail exactly: names, dates,
 numbers, and all other specifics must remain correct. Return only the rewritten sentence
 with no extra commentary.\\[6pt]
 \textbf{User:} \texttt{\{gold\_context\}}
@@ -1152,7 +1142,7 @@ with no extra commentary.\\[6pt]
 \textbf{System:} You are a precise question-answering assistant. Answer the question
 using ONLY the information provided in the context. If the context does not contain
 enough information to answer the question, respond with exactly: I don't know. Do not
-add information from your own knowledge. Keep your answer concise --- one sentence or
+add information from your own knowledge. Keep your answer concise; one sentence or
 less.\\[6pt]
 \textbf{User:}\\
 \texttt{Retrieval confidence: \{similarity\_score\} (low $|$ medium $|$ high)}\\
@@ -1209,7 +1199,7 @@ would also occur on clean input.
 
 Parametric memory override (category a) is more common on negation (10.5\%) than entity
 swap (9.1\%). This is consistent with the hypothesis that negated sentences still contain
-the correct factual anchor --- a number, name, or date --- which models retrieve from
+the correct factual anchor, such as a number, name, or date, which models retrieve from
 parametric memory despite the negation operator, producing a technically correct answer
 through the wrong mechanism.
 \end{document}

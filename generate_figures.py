@@ -87,42 +87,25 @@ cliff_models  = ["llama3.2:3b", "llama3.1:8b", "mistral:7b",
 cliff_scores  = [0.173, 0.192, 0.222, 0.234, 0.241, 0.244]
 cliff_colors  = ["#4e8098", "#90c2e7", "#c44d34",
                  "#e8a838", "#7b9e3f", "#6b4c9a"]
-cliff_types   = ["Open-weight", "Open-weight", "Open-weight",
-                 "Open-weight", "Closed-source", "Closed-source"]
-sig_labels    = ["***", "***", "***", "***", "***", "***"]
 
 fig, ax = plt.subplots(figsize=(6.5, 3.8))
 y = np.arange(len(cliff_models))
 bars = ax.barh(y, cliff_scores, color=cliff_colors,
                edgecolor="white", linewidth=0.5, height=0.5)
 
-for i, (score, sig, mtype) in enumerate(zip(cliff_scores, sig_labels, cliff_types)):
-    ax.text(score + 0.005, i, sig, va="center", fontsize=11,
-            fontweight="bold", color="#333333")
-    if mtype == "Closed-source":
-        ax.text(-0.005, i, "●", va="center", ha="right",
-                fontsize=8, color="#555")
+for i, score in enumerate(cliff_scores):
+    ax.text(score + 0.004, i, f"{score:.3f}", va="center", fontsize=9,
+            color="#333333")
 
 ax.axvline(x=0, color="black", linewidth=1.0, linestyle="-")
-ax.axvline(x=0.70, color="#888888", linewidth=1.0, linestyle="--",
-           label="Ideal cliff (≈0.70)")
 
 ax.set_yticks(y)
 ax.set_yticklabels(cliff_models, fontsize=10)
 ax.set_xlabel(r"$\Delta_\mathrm{abstain}$", fontsize=11)
-ax.set_xlim(0, 0.82)
-ax.legend(fontsize=9, loc="lower right")
+ax.set_xlim(0, 0.28)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 ax.grid(axis="x", linestyle="--", alpha=0.4)
-
-# Add type annotations on right side
-for i, mtype in enumerate(cliff_types):
-    label = "CS" if mtype == "Closed-source" else "OW"
-    color = "#6b4c9a" if mtype == "Closed-source" else "#555555"
-    ax.text(0.81, i, label, va="center", ha="left",
-            fontsize=7, color=color,
-            transform=ax.get_yaxis_transform())
 
 plt.tight_layout()
 plt.savefig(f"{FIGURES_DIR}/fig3_cliff_scores.pdf", bbox_inches="tight")
